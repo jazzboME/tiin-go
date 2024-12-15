@@ -7,9 +7,10 @@ go get github.com/the-trader-dev/tiin-go
 ```
 
 ## Usage
-There are two primary ways to use this package: 
+There are three primary ways to use this package: 
 1. As a Tiingo frontend client
-2. Strictly as a url builder
+2. As a url builder
+3. Strictly use the types
 
 ### Client
 Using tiin-go as a frontend client for the Tiingo api is the simplest way to use
@@ -118,6 +119,42 @@ func main() {
 	}
 
 	fmt.Println("Apple's metadata:", metadata)
+}
+```
+
+### Steal the types
+Implemented endpoints have a one-to-one matching of Tiingo types to Golang types. 
+You can handle the entire request lifecycle yourself and steal the types to make 
+marshalling & unmarshalling easier.
+
+```go
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/gocarina/gocsv"
+	tiingo "github.com/the-trader-dev/tiin-go"
+)
+
+func main() {
+	// Raw bytes from some endpoint you requested
+	var jsonBytes []byte
+	var csvBytes []byte
+
+	// Unmarshal
+	var jsonPrices []tiingo.EodPrice
+	if err := json.Unmarshal(jsonBytes, &jsonPrices); err != nil {
+		panic(err)
+	}
+	var csvPrices []tiingo.EodPrice
+	if err := gocsv.UnmarshalBytes(csvBytes, &csvPrices); err != nil {
+		panic(err)
+	}
+
+	fmt.Println("prices from json:", jsonPrices)
+	fmt.Println("prices from csv:", csvPrices)
 }
 ```
 
