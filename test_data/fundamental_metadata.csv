@@ -1,0 +1,6 @@
+permaTicker,ticker,name,isActive,isADR,sector,industry,sicCode,sicSector,sicIndustry,reportingCurrency,location,companyWebsite,secFilingWebsite,statementLastUpdated,dailyLastUpdated,dataProviderPermaTicker
+US000000000038,aapl,Apple Inc,True,False,Technology,Consumer Electronics,3571,Manufacturing,Electronic Computers,usd,"California, USA",http://www.apple.com,https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000320193,2024-11-02 01:01:16.780400+00:00,2024-12-13 14:15:09.502872+00:00,199059
+US000000000038,aapl,Apple Inc,True,False,Technology,Consumer Electronics,3571,Manufacturing,Electronic Computers,usd,"California, USA",http://www.apple.com,https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000320193,2024-11-02 01:01:16.780400+00:00,2024-12-13 14:15:09.502872+00:00,199059
+US000000009823,aac,American Addiction Centers,False,False,,,,,,,,,,2021-04-05 22:01:56.682496+00:00,2021-04-19 20:41:37.359000+00:00,
+US000000073255,aav1,AVATEX CORP,False,False,Real Estate,Real Estate Services,6500,Finance Insurance And Real Estate,Real Estate,usd,"Texas, USA",,https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000716644,2020-08-06 22:08:27.305372+00:00,,
+,,,,,,,,,,,,,,,,

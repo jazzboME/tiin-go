@@ -1,0 +1,4 @@
+name,ticker,permaTicker,openFIGIComposite,assetType,isActive,countryCode
+Apple Inc,AAPL,US000000000038,BBG000B9XRY4,Stock,True,US
+Pineapple Inc,PNPL,US000000047877,BBG000D05J52,Stock,True,US
+,,,,,,

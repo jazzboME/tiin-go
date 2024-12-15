@@ -1,0 +1,17 @@
+[
+  {
+  "dataCode": "rps",
+  "name": "Revenue Per Share",
+  "description": "Revenue per share",
+  "statementType": "overview",
+  "units": "$"
+  },
+  {
+    "dataCode": "roa",
+    "name": "Return on Assets ROA",
+    "description": "Net Income/Total Assets",
+    "statementType": "overview",
+    "units": "%"
+  },
+  {}
+]

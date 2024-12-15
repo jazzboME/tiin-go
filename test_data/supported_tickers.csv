@@ -1,0 +1,4 @@
+ticker,exchange,assetType,priceCurrency,startDate,endDate
+AAPL,NASDAQ,Stock,USD,1980-12-12,2024-12-12
+AAPL,NASDAQ,Stock,USD,1980-12-12,2024-12-12
+,,,,,

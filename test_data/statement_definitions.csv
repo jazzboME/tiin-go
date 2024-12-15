@@ -1,0 +1,4 @@
+dataCode,name,description,statementType,units
+rps,Revenue Per Share,Revenue per share,overview,$
+roa,Return on Assets ROA,Net Income/Total Assets,overview,%
+,,,,

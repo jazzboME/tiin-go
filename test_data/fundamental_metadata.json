@@ -1,0 +1,41 @@
+[
+  {
+    "permaTicker": "US000000000038",
+    "ticker": "aapl",
+    "name": "Apple Inc",
+    "isActive": true,
+    "isADR": false,
+    "sector": "Technology",
+    "industry": "Consumer Electronics",
+    "sicCode": 3571,
+    "sicSector": "Manufacturing",
+    "sicIndustry": "Electronic Computers",
+    "reportingCurrency": "usd",
+    "location": "California, USA",
+    "companyWebsite": "http://www.apple.com",
+    "secFilingWebsite": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000320193",
+    "statementLastUpdated": "2024-11-02T01:01:16.780Z",
+    "dailyLastUpdated": "2024-12-13T14:15:09.502Z",
+    "dataProviderPermaTicker": "199059"
+  },
+  {
+    "permaTicker": "US000000000038",
+    "ticker": "aapl",
+    "name": "Apple Inc",
+    "isActive": true,
+    "isADR": false,
+    "sector": "Technology",
+    "industry": "Consumer Electronics",
+    "sicCode": 3571,
+    "sicSector": "Manufacturing",
+    "sicIndustry": "Electronic Computers",
+    "reportingCurrency": "usd",
+    "location": "California, USA",
+    "companyWebsite": "http://www.apple.com",
+    "secFilingWebsite": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000320193",
+    "statementLastUpdated": "2024-11-02T01:01:16.780Z",
+    "dailyLastUpdated": "2024-12-13T14:15:09.502Z",
+    "dataProviderPermaTicker": "199059"
+  },
+  {}
+]
