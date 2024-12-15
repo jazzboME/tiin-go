@@ -63,10 +63,11 @@ func main() {
 ```
 
 ### URL Builder
-Using tiin-go purely as a url builder offers the most control. You pass in the
-wanted parameters into the given url function and the valid corresponding url 
-is returned. You then do the actual request however you want. Once the request 
-is made, you can then unmarshal the response into one of the predefined types. 
+Using tiin-go purely as a url builder offers the best balance of control & ease. 
+You pass in the wanted parameters into the given url function and the valid 
+corresponding url is returned. You then do the actual request however you want. 
+Once the request is made, you can then unmarshal the response into one of the 
+predefined types. 
 
 NOTE: no token query param is added, you must handle authentication yourself
 
@@ -123,9 +124,9 @@ func main() {
 ```
 
 ### Steal the types
-Implemented endpoints have a one-to-one matching of Tiingo types to Golang types. 
-You can handle the entire request lifecycle yourself and steal the types to make 
-marshalling & unmarshalling easier.
+This usage pattern offers the most control. You handle the entire request lifecycle 
+and simply steal the one-to-one matching Tiingo to Golang types for easier 
+marshalling & unmarshalling. 
 
 ```go
 package main
