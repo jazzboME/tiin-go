@@ -21,6 +21,6 @@ jobs:
 
     - name: Test
       env: 
-        TIINGO_TOKEN: ${{ TIINGO_TOKEN }}
+        TIINGO_TOKEN: ${{ secrets.TIINGO_TOKEN }}
 
       run: go test -v ./...
