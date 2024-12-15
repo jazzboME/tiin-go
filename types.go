@@ -661,12 +661,12 @@ type StmtDataField struct {
 // StmtDataFlat corresponds to the [Fundamentals].2.6.3 Statement Data Endpoint
 // when a csv respFormat is requested
 type StmtDataFlat struct {
-	Date          time.Time `csv:"date"`
-	Year          int       `csv:"year"`
-	Quarter       int       `csv:"quarter"`
-	StatementType string    `csv:"statementType"`
-	DataCode      string    `csv:"dataCode"`
-	Value         float64   `csv:"value"`
+	Date          time.Time `json:"date" csv:"date"`
+	Year          int       `json:"year" csv:"year"`
+	Quarter       int       `json:"quarter" csv:"quarter"`
+	StatementType string    `json:"statementType" csv:"statementType"`
+	DataCode      string    `json:"dataCode" csv:"dataCode"`
+	Value         float64   `json:"value" csv:"value"`
 }
 
 func (s *StmtDataFlat) UnmarshalCSVWithFields(key, value string) error {
