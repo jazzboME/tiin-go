@@ -7,58 +7,58 @@ go get github.com/the-trader-dev/tiin-go
 ```
 
 ## Usage
-There are three primary ways to use this package: 
+Maximum flexibility is offered with three primary ways to use tiin-go: 
 1. As a Tiingo frontend client
 2. As a url builder
-3. Strictly use the types
+3. Steal the types
 
-### Client
+### Tiingo Frontend Client
 Using tiin-go as a frontend client for the Tiingo api is the simplest way to use
-this package. It offers a few advantages over just using the query building 
+this package. It offers a few advantages over just using the query building & type
 capabilities:
 1. Centralized rate limiting
 2. Automatic authentication
 3. Request logging
-4. Automatic response body reading
+4. Automatic response body lifecycle management
 
 ```go
 package main
 
 import (
-	"context"
-	"encoding/json"
-	"fmt"
-	"log/slog"
-	"net/http"
-	"os"
+    "context"
+    "encoding/json"
+    "fmt"
+    "log/slog"
+    "net/http"
+    "os"
 
-	tiingo "github.com/the-trader-dev/tiin-go"
-	"golang.org/x/time/rate"
+    tiingo "github.com/the-trader-dev/tiin-go"
+    "golang.org/x/time/rate"
 )
 
-func main() {
-	// Initialize client
-	client := tiingo.NewClient(os.Getenv("YOUR_TIINGO_TOKEN"))
+func main() { 
+    // Initialize client
+    client := tiingo.NewClient(os.Getenv("YOUR_TIINGO_TOKEN"))
 
-	// You can optionally set a rate limiter, enable logging, and change the
-	// default http client
-	client.RateLimiter = rate.NewLimiter(10, 1)
-	client.Logger = slog.New(slog.NewTextHandler(os.Stdout, nil))
-	client.HttpClient = &http.Client{}
+    // You can optionally set a rate limiter, enable logging, and change the
+    // default http client
+    client.RateLimiter = rate.NewLimiter(10, 1)
+    client.Logger = slog.New(slog.NewTextHandler(os.Stdout, nil))
+    client.HttpClient = &http.Client{}
 
-	// Make request
-	rawBytes, err := client.DefaultEodMetadata(context.Background(), "AAPL")
-	if err != nil {
-		panic(err)
-	}
+    // Make request
+    rawBytes, err := client.DefaultEodMetadata(context.Background(), "AAPL")
+    if err != nil {
+        panic(err)
+    }
 
-	// Unmarshal the response
-	var metadata tiingo.EodMetadata
-	if err = json.Unmarshal(rawBytes, &metadata); err != nil {
-		panic(err)
-	}
+    // Unmarshal the response
+    var metadata tiingo.EodMetadata
+    if err = json.Unmarshal(rawBytes, &metadata); err != nil {
+        panic(err)
+    }
 
-	fmt.Println("Apple's metadata:", metadata)
+    fmt.Println("Apple's metadata:", metadata)
 }
 ```
 
@@ -74,51 +74,51 @@ NOTE: no token query param is added, you must handle authentication yourself
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"io"
-	"net/http"
+    "encoding/json"
+    "fmt"
+    "io"
+    "net/http"
 
-	tiingo "github.com/the-trader-dev/tiin-go"
+    tiingo "github.com/the-trader-dev/tiin-go"
 )
 
 func main() {
-	// Build url
-	url := tiingo.EodMetadataUrl("AAPL", tiingo.JSON)
+    // Build url
+    url := tiingo.EodMetadataUrl("AAPL", tiingo.JSON)
 
-	// Build request
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		panic(err)
-	}
+    // Build request
+    req, err := http.NewRequest(http.MethodGet, url, nil)
+    if err != nil {
+        panic(err)
+    }
 
-	// Add auth
-	req.Header.Set("Authorization", "Token {your_token}")
+    // Add auth
+    req.Header.Set("Authorization", "Token {your_token}")
 
-	// Make request
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	defer func() {
-		if err = resp.Body.Close(); err != nil {
-			panic(err)
-		}
-	}()
+    // Make request
+    resp, err := http.DefaultClient.Do(req)
+    if err != nil {
+        panic(err)
+    }
+    defer func() {
+        if err = resp.Body.Close(); err != nil {
+            panic(err)
+        }
+    }()
 
-	// Read body
-	rawBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		panic(err)
-	}
+    // Read body
+    rawBytes, err := io.ReadAll(resp.Body)
+    if err != nil {
+        panic(err)
+    }
 
-	// Unmarshal
-	var metadata tiingo.EodMetadata
-	if err = json.Unmarshal(rawBytes, &metadata); err != nil {
-		panic(err)
-	}
+    // Unmarshal
+    var metadata tiingo.EodMetadata
+    if err = json.Unmarshal(rawBytes, &metadata); err != nil {
+        panic(err)
+    }
 
-	fmt.Println("Apple's metadata:", metadata)
+    fmt.Println("Apple's metadata:", metadata)
 }
 ```
 
@@ -131,30 +131,30 @@ marshalling & unmarshalling easier.
 package main
 
 import (
-	"encoding/json"
-	"fmt"
+    "encoding/json"
+    "fmt"
 
-	"github.com/gocarina/gocsv"
-	tiingo "github.com/the-trader-dev/tiin-go"
+    "github.com/gocarina/gocsv"
+    tiingo "github.com/the-trader-dev/tiin-go"
 )
 
 func main() {
-	// Raw bytes from some endpoint you requested
-	var jsonBytes []byte
-	var csvBytes []byte
+    // Raw bytes from some endpoint you requested
+    var jsonBytes []byte
+    var csvBytes []byte
 
-	// Unmarshal
-	var jsonPrices []tiingo.EodPrice
-	if err := json.Unmarshal(jsonBytes, &jsonPrices); err != nil {
-		panic(err)
-	}
-	var csvPrices []tiingo.EodPrice
-	if err := gocsv.UnmarshalBytes(csvBytes, &csvPrices); err != nil {
-		panic(err)
-	}
+    // Unmarshal
+    var jsonPrices []tiingo.EodPrice
+    if err := json.Unmarshal(jsonBytes, &jsonPrices); err != nil {
+        panic(err)
+    }
+    var csvPrices []tiingo.EodPrice
+    if err := gocsv.UnmarshalBytes(csvBytes, &csvPrices); err != nil {
+        panic(err)
+    }
 
-	fmt.Println("prices from json:", jsonPrices)
-	fmt.Println("prices from csv:", csvPrices)
+    fmt.Println("prices from json:", jsonPrices)
+    fmt.Println("prices from csv:", csvPrices)
 }
 ```
 
