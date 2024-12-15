@@ -1,4 +1,4 @@
-module tiin-go
+module github.com/the-trader-dev/tiin-go
 
 go 1.23.3
 
