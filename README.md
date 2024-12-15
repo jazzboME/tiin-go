@@ -174,6 +174,7 @@ err := json.Unmarshal(rawJsonBytes, &TiingoGolangType)
 #### CSV
 Any package that knows how to read csv struct tags should be able to marshal/unmarshal
 successfully. However, it has only been tested with & internally uses with [gocsv](https://github.com/gocarina/gocsv).
+
 Initially, the plan was to implement custom csv marshalling/unmarshalling to minimize 
 dependencies. However, the vast quantity of types made compromising with an external
 dependency a lot more attractive in terms of the overall maintenance overhead. 
