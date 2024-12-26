@@ -91,6 +91,9 @@ type StmtDataParams struct {
 // StmtDataFlat returns the statement values response data for the given ticker
 // with the provided params from the [Fundamentals].2.6.3 Statement Data Endpoint.
 //
+// A CSV response format must be used to get the flat data structure, if the
+// provided StmtDataParams.RespFormat is not CSV, it will be changed to that.
+//
 // If queryParams is non-nil, any non-zero struct values will be applied to the
 // url. Zero value items will be left out and Tiingo defaults will be used. A
 // nil queryParams results in all Tiingo defaults.
@@ -115,6 +118,9 @@ func (c *Client) StmtDataFlat(ctx context.Context, ticker string,
 
 // StmtDataNested returns the statement values response data for the given ticker
 // with the provided params from the [Fundamentals].2.6.3 Statement Data Endpoint.
+//
+// A JSON response format must be used to get the nested data structure, if the
+// provided StmtDataParams.RespFormat is not JSON, it will be changed to that.
 //
 // If queryParams is non-nil, any non-zero struct values will be applied to the
 // url. Zero value items will be left out and Tiingo defaults will be used. A
