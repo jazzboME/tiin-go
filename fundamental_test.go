@@ -1,308 +1,160 @@
 package tiingo
 
 import (
+	"context"
 	"testing"
-	"time"
 )
 
-func TestStmtDefsUrl(t *testing.T) {
-	t.Parallel()
+var commonStmtDefsTests = []struct {
+	name   string
+	params *StmtDefsParams
+	url    string
+}{
+	{
+		name:   "nilParams",
+		params: nil,
+		url:    "https://api.tiingo.com/tiingo/fundamentals/definitions",
+	},
+	{
+		name:   "zeroParams",
+		params: &StmtDefsParams{},
+		url:    "https://api.tiingo.com/tiingo/fundamentals/definitions",
+	},
+	{
+		name: "oneTicker",
+		params: &StmtDefsParams{
+			Tickers: []string{"AAPL"},
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/definitions?tickers=AAPL",
+	},
+	{
+		name: "manyTickers",
+		params: &StmtDefsParams{
+			Tickers: []string{"AAPL", "MSFT", "GOOG"},
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/definitions?tickers=AAPL,MSFT,GOOG",
+	},
+	{
+		name: "respFormatCsv",
+		params: &StmtDefsParams{
+			RespFormat: CSV,
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/definitions?format=csv",
+	},
+	{
+		name: "respFormatJson",
+		params: &StmtDefsParams{
+			RespFormat: JSON,
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/definitions?format=json",
+	},
+	{
+		name: "allQueryParams",
+		params: &StmtDefsParams{
+			Tickers:    []string{"AAPL", "MSFT", "GOOG"},
+			RespFormat: JSON,
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/definitions?tickers=AAPL,MSFT,GOOG&format=json",
+	},
+}
 
+func TestStmtDefsUrl(t *testing.T) {
 	type args struct {
-		tickers    []string
-		respFormat Format
+		queryParams *StmtDefsParams
 	}
-	tests := []struct {
+	type test struct {
 		name string
 		args args
 		want string
-	}{
-		{
-			name: "default",
-			args: args{},
-			want: "https://api.tiingo.com/tiingo/fundamentals/definitions",
-		},
-		{
-			name: "tickersOne",
-			args: args{
-				tickers: []string{"AAPL"},
-			},
-			want: "https://api.tiingo.com/tiingo/fundamentals/definitions?tickers=AAPL",
-		},
-		{
-			name: "tickersMany",
-			args: args{
-				tickers: []string{"AAPL", "MSFT", "GOOG", "TSLA"},
-			},
-			want: "https://api.tiingo.com/tiingo/fundamentals/definitions?tickers=AAPL,MSFT,GOOG,TSLA",
-		},
-		{
-			name: "respFormat",
-			args: args{
-				respFormat: CSV,
-			},
-			want: "https://api.tiingo.com/tiingo/fundamentals/definitions?format=csv",
-		},
-		{
-			name: "combined",
-			args: args{
-				tickers:    []string{"AAPL", "MSFT", "GOOG", "TSLA"},
-				respFormat: JSON,
-			},
-			want: "https://api.tiingo.com/tiingo/fundamentals/definitions?tickers=AAPL,MSFT,GOOG,TSLA&format=json",
-		},
 	}
+	var tests []test
+
+	// Add common tests
+	for _, tt := range commonStmtDefsTests {
+		tests = append(tests, struct {
+			name string
+			args args
+			want string
+		}{
+			name: tt.name,
+			args: args{
+				queryParams: tt.params,
+			},
+			want: tt.url,
+		})
+	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := StmtDefsUrl(tt.args.tickers, tt.args.respFormat); got != tt.want {
+			if got := StmtDefsUrl(tt.args.queryParams); got != tt.want {
 				t.Errorf("StmtDefsUrl() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestStmtValsUrl(t *testing.T) {
+func TestClient_StmtDefs(t *testing.T) {
 	t.Parallel()
+	ctx := context.Background()
 
 	type args struct {
-		ticker     string
-		asReported bool
-		startDate  time.Time
-		endDate    time.Time
-		sort       Sort
-		respFormat Format
+		ctx         context.Context
+		queryParams *StmtDefsParams
 	}
-	tests := []struct {
-		name string
-		args args
-		want string
-	}{
-		{
-			name: "default",
-			args: args{
-				ticker: "AAPL",
-			},
-			want: "https://api.tiingo.com/tiingo/fundamentals/AAPL/statements",
-		},
-		{
-			name: "asReported",
-			args: args{
-				ticker:     "AAPL",
-				asReported: true,
-			},
-			want: "https://api.tiingo.com/tiingo/fundamentals/AAPL/statements?asReported=true",
-		},
-		{
-			name: "startDate",
-			args: args{
-				ticker:    "AAPL",
-				startDate: startDate,
-			},
-			want: "https://api.tiingo.com/tiingo/fundamentals/AAPL/statements?startDate=2024-01-01",
-		},
-		{
-			name: "endDate",
-			args: args{
-				ticker:  "AAPL",
-				endDate: endDate,
-			},
-			want: "https://api.tiingo.com/tiingo/fundamentals/AAPL/statements?endDate=2024-01-02",
-		},
-		{
-			name: "sort",
-			args: args{
-				ticker: "AAPL",
-				sort:   DateAsc,
-			},
-			want: "https://api.tiingo.com/tiingo/fundamentals/AAPL/statements?sort=date",
-		},
-		{
-			name: "respFormat",
-			args: args{
-				ticker:     "AAPL",
-				respFormat: CSV,
-			},
-			want: "https://api.tiingo.com/tiingo/fundamentals/AAPL/statements?format=csv",
-		},
-		{
-			name: "combinedTwo",
-			args: args{
-				ticker:  "AAPL",
-				endDate: endDate,
-				sort:    DateDesc,
-			},
-			want: "https://api.tiingo.com/tiingo/fundamentals/AAPL/statements?endDate=2024-01-02&sort=-date",
-		},
-		{
-			name: "combinedAll",
-			args: args{
-				ticker:     "AAPL",
-				asReported: true,
-				startDate:  startDate,
-				endDate:    endDate,
-				sort:       DateDesc,
-				respFormat: JSON,
-			},
-			want: "https://api.tiingo.com/tiingo/fundamentals/AAPL/statements?asReported=true&startDate=2024-01-01&endDate=2024-01-02&sort=-date&format=json",
-		},
+	type test struct {
+		name    string
+		args    args
+		wantErr bool
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := StmtDataUrl(
-				tt.args.ticker,
-				tt.args.asReported,
-				tt.args.startDate,
-				tt.args.endDate,
-				tt.args.sort,
-				tt.args.respFormat,
-			); got != tt.want {
-				t.Errorf("StmtDataUrl() = %v, want %v", got, tt.want)
-			}
+	var tests []test
+
+	// Add common tests
+	for _, tt := range commonStmtDefsTests {
+		tests = append(tests, struct {
+			name    string
+			args    args
+			wantErr bool
+		}{
+			name: tt.name,
+			args: args{
+				ctx:         ctx,
+				queryParams: tt.params,
+			},
+			wantErr: false,
 		})
 	}
-}
 
-func TestDailyFundamentalUrl(t *testing.T) {
-	t.Parallel()
+	// Add invalid argument tests
+	tests = append(tests, []test{
+		{
+			name: "invalidRespFormat",
+			args: args{
+				ctx: ctx,
+				queryParams: &StmtDefsParams{
+					RespFormat: "BAD FORMAT",
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "invalidTickers",
+			args: args{
+				ctx: ctx,
+				queryParams: &StmtDefsParams{
+					Tickers: []string{"BAD TICKER// "},
+				},
+			},
+			wantErr: true,
+		},
+	}...)
 
-	type args struct {
-		ticker     string
-		startDate  time.Time
-		endDate    time.Time
-		sort       Sort
-		respFormat Format
-	}
-	tests := []struct {
-		name string
-		args args
-		want string
-	}{
-		{
-			name: "default",
-			args: args{
-				ticker: "AAPL",
-			},
-			want: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily",
-		},
-		{
-			name: "startDate",
-			args: args{
-				ticker:    "AAPL",
-				startDate: startDate,
-			},
-			want: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily?startDate=2024-01-01",
-		},
-		{
-			name: "endDate",
-			args: args{
-				ticker:  "AAPL",
-				endDate: endDate,
-			},
-			want: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily?endDate=2024-01-02",
-		},
-		{
-			name: "sort",
-			args: args{
-				ticker: "AAPL",
-				sort:   MktCapAsc,
-			},
-			want: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily?sort=marketCap",
-		},
-		{
-			name: "respFormat",
-			args: args{
-				ticker:     "AAPL",
-				respFormat: CSV,
-			},
-			want: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily?format=csv",
-		},
-		{
-			name: "combinedTwo",
-			args: args{
-				ticker:  "AAPL",
-				endDate: endDate,
-				sort:    PBRatioDesc,
-			},
-			want: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily?endDate=2024-01-02&sort=-pbRatio",
-		},
-		{
-			name: "combinedAll",
-			args: args{
-				ticker:     "AAPL",
-				startDate:  startDate,
-				endDate:    endDate,
-				sort:       DateAsc,
-				respFormat: JSON,
-			},
-			want: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily?startDate=2024-01-01&endDate=2024-01-02&sort=date&format=json",
-		},
-	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := DailyFundamentalUrl(
-				tt.args.ticker,
-				tt.args.startDate,
-				tt.args.endDate,
-				tt.args.sort,
-				tt.args.respFormat,
-			); got != tt.want {
-				t.Errorf("DailyFundamentalUrl() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestFundamentalMetadataUrl(t *testing.T) {
-	t.Parallel()
-
-	type args struct {
-		tickers    []string
-		respFormat Format
-	}
-	tests := []struct {
-		name string
-		args args
-		want string
-	}{
-		{
-			name: "default",
-			args: args{},
-			want: "https://api.tiingo.com/tiingo/fundamentals/meta",
-		},
-		{
-			name: "TickersOne",
-			args: args{
-				tickers: []string{"AAPL"},
-			},
-			want: "https://api.tiingo.com/tiingo/fundamentals/meta?tickers=AAPL",
-		},
-		{
-			name: "TickersMany",
-			args: args{
-				tickers: []string{"AAPL", "MSFT", "GOOG", "TSLA"},
-			},
-			want: "https://api.tiingo.com/tiingo/fundamentals/meta?tickers=AAPL,MSFT,GOOG,TSLA",
-		},
-		{
-			name: "respFormat",
-			args: args{
-				respFormat: CSV,
-			},
-			want: "https://api.tiingo.com/tiingo/fundamentals/meta?format=csv",
-		},
-		{
-			name: "combined",
-			args: args{
-				tickers:    []string{"AAPL", "MSFT", "GOOG", "TSLA"},
-				respFormat: JSON,
-			},
-			want: "https://api.tiingo.com/tiingo/fundamentals/meta?tickers=AAPL,MSFT,GOOG,TSLA&format=json",
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := FundamentalMetadataUrl(tt.args.tickers, tt.args.respFormat); got != tt.want {
-				t.Errorf("FundamentalMetadataUrl() = %v, want %v", got, tt.want)
+			t.Parallel()
+			if err := liveTest[[]StmtDef]("StmtDefs()", tt.wantErr, func() ([]StmtDef, error) {
+				return getClient().StmtDefs(tt.args.ctx, tt.args.queryParams)
+			}); err != nil {
+				t.Error(err)
 			}
 		})
 	}

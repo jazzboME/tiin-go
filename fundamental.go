@@ -2,31 +2,42 @@ package tiingo
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 )
 
+type StmtDefsParams struct {
+	Tickers    []string
+	RespFormat Format
+}
+
 // StmtDefs returns the statement definition response data with the
 // provided params from the [Fundamentals].2.6.2 Definitions Data Endpoint.
 //
-// Any zero value arguments will be left off the query string & whatever Tiingo's
-// default for an empty query string will be returned.
-func (c *Client) StmtDefs(ctx context.Context, tickers []string, respFormat Format) ([]byte, error) {
-	// Build url
-	url := StmtDefsUrl(tickers, respFormat)
-
+// If queryParams is non-nil, any non-zero struct values will be applied to the
+// url. Zero value items will be left out and Tiingo defaults will be used. A
+// nil queryParams results in all Tiingo defaults.
+func (c *Client) StmtDefs(ctx context.Context, queryParams *StmtDefsParams) ([]StmtDef, error) {
 	// Fetch the data
-	return c.get(ctx, url)
+	rawBytes, err := c.StmtDefsRaw(ctx, queryParams)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get data: %w", err)
+	}
+
+	// Parse
+	var format string
+	if queryParams != nil {
+		format = queryParams.RespFormat
+	}
+	return Parse[[]StmtDef](rawBytes, format)
 }
 
-// DefaultStmtDefs returns the statement definition response data from the
-// [Fundamentals].2.6.2 Definitions Data Endpoint.
-//
-// Only the required params are added to the url & query string, everything else
-// will be the Tiingo defaults.
-func (c *Client) DefaultStmtDefs(ctx context.Context) ([]byte, error) {
+// StmtDefsRaw functions the same as StmtDefs, except the raw response
+// bytes are returned instead of the parsed type.
+func (c *Client) StmtDefsRaw(ctx context.Context, queryParams *StmtDefsParams) ([]byte, error) {
 	// Build url
-	url := StmtDefsUrl(nil, "")
+	url := StmtDefsUrl(queryParams)
 
 	// Fetch the data
 	return c.get(ctx, url)
@@ -35,28 +46,35 @@ func (c *Client) DefaultStmtDefs(ctx context.Context) ([]byte, error) {
 // StmtDefsUrl returns a built url for with the provided params
 // from the [Fundamentals].2.6.2 Definitions Data Endpoint.
 //
-// Any zero value arguments will be left off the query string.
-func StmtDefsUrl(tickers []string, respFormat Format) string {
+// If queryParams is non-nil, any non-zero struct values will be applied to the
+// url. Zero value items will be left out and Tiingo defaults will be used. A
+// nil queryParams results in all Tiingo defaults.
+func StmtDefsUrl(queryParams *StmtDefsParams) string {
 	var url strings.Builder
 
 	// Build base endpoint url
 	url.WriteString("https://api.tiingo.com/tiingo/fundamentals/definitions")
 
+	// No query params to add
+	if queryParams == nil {
+		return url.String()
+	}
+
 	// Build query string
 	first := true
-	if len(tickers) > 0 {
+	if len(queryParams.Tickers) > 0 {
 		url.WriteString("?tickers=")
-		url.WriteString(strings.Join(tickers, ","))
+		url.WriteString(strings.Join(queryParams.Tickers, ","))
 		first = false
 	}
-	if respFormat != "" {
+	if queryParams.RespFormat != "" {
 		if first {
 			url.WriteString("?")
 		} else {
 			url.WriteString("&")
 		}
 		url.WriteString("format=")
-		url.WriteString(respFormat)
+		url.WriteString(queryParams.RespFormat)
 	}
 
 	return url.String()
