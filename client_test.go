@@ -2,6 +2,7 @@ package tiingo
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"reflect"
 	"sync"
@@ -13,7 +14,7 @@ var (
 	getClient = sync.OnceValue[*Client](func() *Client {
 		return NewClient(os.Getenv("TIINGO_TOKEN"), func(client *Client) {
 			client.RateLimiter = rate.NewLimiter(10, 1)
-			// client.Logger = slog.Default()
+			client.Logger = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
 		})
 	})
 )
