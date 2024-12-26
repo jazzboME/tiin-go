@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strconv"
 	"time"
+
+	"github.com/gocarina/gocsv"
 )
 
 const (
@@ -889,4 +891,25 @@ func parseTimeMultiLayout(layouts []string, value string) (time.Time, error) {
 	}
 
 	return time.Time{}, fmt.Errorf("multipl errors: %v", errs)
+}
+
+// Parse takes in raw bytes and parses them according to the format. Valid
+// formats are CSV or JSON (an empty string defaults to JSON).
+func Parse[T any](rawBytes []byte, format Format) (T, error) {
+	var data T
+	var err error
+	switch format {
+	case JSON, "":
+		err = json.Unmarshal(rawBytes, &data)
+	case CSV:
+		err = gocsv.UnmarshalBytes(rawBytes, &data)
+	default:
+		return data, fmt.Errorf("format not recognized: %s", format)
+	}
+
+	if err != nil {
+		return data, fmt.Errorf("failed to parse raw bytes: %w", err)
+	}
+
+	return data, nil
 }
