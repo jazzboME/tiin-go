@@ -80,28 +80,78 @@ func StmtDefsUrl(queryParams *StmtDefsParams) string {
 	return url.String()
 }
 
-// StmtData returns the statement values response data for the given ticker
-// with the provided params from the [Fundamentals].2.6.3 Statement Data Endpoint.
-//
-// Any zero value arguments will be left off the query string & whatever Tiingo's
-// default for an empty query string will be returned.
-func (c *Client) StmtData(ctx context.Context, ticker string, asReported bool,
-	startDate, endDate time.Time, sort Sort, respFormat Format) ([]byte, error) {
-	// Build url
-	url := StmtDataUrl(ticker, asReported, startDate, endDate, sort, respFormat)
-
-	// Fetch the data
-	return c.get(ctx, url)
+type StmtDataParams struct {
+	AsReported bool
+	StartDate  time.Time
+	EndDate    time.Time
+	Sort       Sort
+	RespFormat Format
 }
 
-// DefaultStmtData returns the statement values response data for the given ticker
-// from the [Fundamentals].2.6.3 Statement Data Endpoint.
+// StmtDataFlat returns the statement values response data for the given ticker
+// with the provided params from the [Fundamentals].2.6.3 Statement Data Endpoint.
 //
-// Only the required params are added to the url & query string, everything else
-// will be the Tiingo defaults.
-func (c *Client) DefaultStmtData(ctx context.Context, ticker string) ([]byte, error) {
+// If queryParams is non-nil, any non-zero struct values will be applied to the
+// url. Zero value items will be left out and Tiingo defaults will be used. A
+// nil queryParams results in all Tiingo defaults.
+func (c *Client) StmtDataFlat(ctx context.Context, ticker string,
+	queryParams *StmtDataParams) ([]StmtDataFlat, error) {
+	// Ensure the response format is csv (required for flat statement data)
+	if queryParams == nil {
+		queryParams = &StmtDataParams{RespFormat: CSV}
+	} else {
+		queryParams.RespFormat = CSV
+	}
+
+	// Fetch the data
+	rawBytes, err := c.StmtDataRaw(ctx, ticker, queryParams)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get data: %w", err)
+	}
+
+	// Parse
+	var format string
+	if queryParams != nil {
+		format = queryParams.RespFormat
+	}
+	return Parse[[]StmtDataFlat](rawBytes, format)
+}
+
+// StmtDataNested returns the statement values response data for the given ticker
+// with the provided params from the [Fundamentals].2.6.3 Statement Data Endpoint.
+//
+// If queryParams is non-nil, any non-zero struct values will be applied to the
+// url. Zero value items will be left out and Tiingo defaults will be used. A
+// nil queryParams results in all Tiingo defaults.
+func (c *Client) StmtDataNested(ctx context.Context, ticker string,
+	queryParams *StmtDataParams) ([]StmtDataNested, error) {
+	// Ensure the response format is json (required for nested statement data)
+	if queryParams == nil {
+		queryParams = &StmtDataParams{RespFormat: JSON}
+	} else {
+		queryParams.RespFormat = JSON
+	}
+
+	// Fetch the data
+	rawBytes, err := c.StmtDataRaw(ctx, ticker, queryParams)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get data: %w", err)
+	}
+
+	// Parse
+	var format string
+	if queryParams != nil {
+		format = queryParams.RespFormat
+	}
+	return Parse[[]StmtDataNested](rawBytes, format)
+}
+
+// StmtDataRaw functions the same as StmtDataFlat and StmtDataNested, except the raw
+// response bytes are returned instead of the parsed type.
+func (c *Client) StmtDataRaw(ctx context.Context, ticker string,
+	queryParams *StmtDataParams) ([]byte, error) {
 	// Build url
-	url := StmtDataUrl(ticker, false, time.Time{}, time.Time{}, "", "")
+	url := StmtDataUrl(ticker, queryParams)
 
 	// Fetch the data
 	return c.get(ctx, url)
@@ -110,9 +160,10 @@ func (c *Client) DefaultStmtData(ctx context.Context, ticker string) ([]byte, er
 // StmtDataUrl returns a built url for with the provided params
 // from the [Fundamentals].2.6.3 Statement Data Endpoint.
 //
-// Any zero value arguments will be left off the query string.
-func StmtDataUrl(ticker string, asReported bool, startDate, endDate time.Time,
-	sort Sort, respFormat Format) string {
+// If queryParams is non-nil, any non-zero struct values will be applied to the
+// url. Zero value items will be left out and Tiingo defaults will be used. A
+// nil queryParams results in all Tiingo defaults.
+func StmtDataUrl(ticker string, queryParams *StmtDataParams) string {
 	var url strings.Builder
 
 	// Build base endpoint url
@@ -120,13 +171,18 @@ func StmtDataUrl(ticker string, asReported bool, startDate, endDate time.Time,
 	url.WriteString(ticker)
 	url.WriteString("/statements")
 
+	// No query params to add
+	if queryParams == nil {
+		return url.String()
+	}
+
 	// Build query string
 	first := true
-	if asReported {
+	if queryParams.AsReported {
 		url.WriteString("?asReported=true")
 		first = false
 	}
-	if !startDate.IsZero() {
+	if !queryParams.StartDate.IsZero() {
 		if first {
 			url.WriteString("?")
 			first = false
@@ -134,9 +190,9 @@ func StmtDataUrl(ticker string, asReported bool, startDate, endDate time.Time,
 			url.WriteString("&")
 		}
 		url.WriteString("startDate=")
-		url.WriteString(startDate.Format("2006-01-02"))
+		url.WriteString(queryParams.StartDate.Format("2006-01-02"))
 	}
-	if !endDate.IsZero() {
+	if !queryParams.EndDate.IsZero() {
 		if first {
 			url.WriteString("?")
 			first = false
@@ -144,9 +200,9 @@ func StmtDataUrl(ticker string, asReported bool, startDate, endDate time.Time,
 			url.WriteString("&")
 		}
 		url.WriteString("endDate=")
-		url.WriteString(endDate.Format("2006-01-02"))
+		url.WriteString(queryParams.EndDate.Format("2006-01-02"))
 	}
-	if sort != "" {
+	if queryParams.Sort != "" {
 		if first {
 			url.WriteString("?")
 			first = false
@@ -154,16 +210,16 @@ func StmtDataUrl(ticker string, asReported bool, startDate, endDate time.Time,
 			url.WriteString("&")
 		}
 		url.WriteString("sort=")
-		url.WriteString(sort)
+		url.WriteString(queryParams.Sort)
 	}
-	if respFormat != "" {
+	if queryParams.RespFormat != "" {
 		if first {
 			url.WriteString("?")
 		} else {
 			url.WriteString("&")
 		}
 		url.WriteString("format=")
-		url.WriteString(respFormat)
+		url.WriteString(queryParams.RespFormat)
 	}
 
 	return url.String()
