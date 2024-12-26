@@ -33,7 +33,11 @@ func (c *Client) EodPrice(ctx context.Context, ticker string,
 	}
 
 	// Parse
-	return Parse[[]EodPrice](rawBytes, queryParams.respFormat)
+	var format string
+	if queryParams != nil {
+		format = queryParams.respFormat
+	}
+	return Parse[[]EodPrice](rawBytes, format)
 }
 
 // EodPriceRaw functions the same as EodPrice, except the raw response bytes are

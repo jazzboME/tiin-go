@@ -26,36 +26,410 @@ func TestClient_EodPrice(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "validArgs",
+			name: "emptyParams",
+			args: args{
+				ctx:         ctx,
+				ticker:      "AAPL",
+				queryParams: nil,
+			},
+		},
+		{
+			name: "startDate",
 			args: args{
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					startDate:    startDate,
-					endDate:      endDate,
-					resampleFreq: Weekly,
-					sort:         DateDesc,
-					respFormat:   CSV,
+					startDate: startDate,
 				},
 			},
 			wantErr: false,
 		},
 		{
-			name: "invalidArgs",
+			name: "endDate",
 			args: args{
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					startDate:    startDate,
-					endDate:      endDate,
+					endDate: endDate,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "dailyResampleFreq",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					resampleFreq: Daily,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "weeklyResampleFreq",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
 					resampleFreq: Weekly,
-					sort:         DateDesc,
-					respFormat:   "BAD FORMAT",
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "monthlyResampleFreq",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					resampleFreq: Monthly,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "annualResampleFreq",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					resampleFreq: Annually,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "dateAscSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: DateAsc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "dateDescSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: DateDesc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "openAscSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: OpenAsc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "openDescSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: OpenDesc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "highAscSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: HighAsc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "highDescSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: HighDesc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "lowAscSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: LowAsc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "lowDescSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: LowDesc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "closeAscSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: CloseAsc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "closeDescSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: CloseDesc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "volumeAscSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: VolumeAsc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "volumeDescSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: VolumeDesc,
+				},
+			},
+			wantErr: false,
+		},
+
+		{
+			name: "AdjOpenAscSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: AdjOpenAsc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "AdjOpenDescSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: AdjOpenDesc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "adjHighAscSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: AdjHighAsc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "adjHighDescSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: AdjHighDesc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "adjLowAscSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: AdjLowAsc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "adjLowDescSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: AdjLowDesc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "adjCloseAscSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: AdjCloseAsc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "adjCloseDescSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: AdjCloseDesc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "adjVolumeAscSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: AdjVolumeAsc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "adjVolumeDescSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: AdjVolumeDesc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "divCashAscSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: DivCashAsc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "divCashDescSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: DivCashDesc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "splitFactorAscSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: SplitFactorAsc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "splitFactorDescSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: SplitFactorDesc,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "invalidTicker",
+			args: args{
+				ctx:         ctx,
+				ticker:      "",
+				queryParams: nil,
+			},
+			wantErr: true,
+		},
+		{
+			name: "invalidResampleFreq",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					resampleFreq: "INVALID FREQUENCY",
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "invalidSort",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					sort: "INVALID SORT",
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "invalidFormat",
+			args: args{
+				ctx:    ctx,
+				ticker: "AAPL",
+				queryParams: &EodPriceParams{
+					respFormat: "INVALID FORMAT",
 				},
 			},
 			wantErr: true,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
@@ -548,7 +922,7 @@ func TestClient_EodMetadata(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "validArgs",
+			name: "validTicker",
 			args: args{
 				ctx:    ctx,
 				ticker: "AAPL",
@@ -556,7 +930,7 @@ func TestClient_EodMetadata(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "invalidArgs",
+			name: "invalidTicker",
 			args: args{
 				ctx:    ctx,
 				ticker: "",
