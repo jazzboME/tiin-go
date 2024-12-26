@@ -423,3 +423,269 @@ func TestClient_StmtDataNested(t *testing.T) {
 		})
 	}
 }
+
+var commonDailyFundamentalTests = []struct {
+	name   string
+	ticker string
+	params *DailyFundamentalParams
+	url    string
+}{
+	{
+		name:   "nilParams",
+		ticker: "AAPL",
+		params: nil,
+		url:    "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily",
+	},
+	{
+		name:   "zeroParams",
+		ticker: "AAPL",
+		params: &DailyFundamentalParams{},
+		url:    "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily",
+	},
+	{
+		name:   "startDate",
+		ticker: "AAPL",
+		params: &DailyFundamentalParams{
+			StartDate: startDate,
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily?startDate=2022-01-01",
+	},
+	{
+		name:   "endDate",
+		ticker: "AAPL",
+		params: &DailyFundamentalParams{
+			EndDate: endDate,
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily?endDate=2024-01-01",
+	},
+	{
+		name:   "sortDateAsc",
+		ticker: "AAPL",
+		params: &DailyFundamentalParams{
+			Sort: DateAsc,
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily?sort=date",
+	},
+	{
+		name:   "sortDateDesc",
+		ticker: "AAPL",
+		params: &DailyFundamentalParams{
+			Sort: DateDesc,
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily?sort=-date",
+	},
+	{
+		name:   "sortMktCapAsc",
+		ticker: "AAPL",
+		params: &DailyFundamentalParams{
+			Sort: MktCapAsc,
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily?sort=marketCap",
+	},
+	{
+		name:   "sortMktCapDesc",
+		ticker: "AAPL",
+		params: &DailyFundamentalParams{
+			Sort: MktCapDesc,
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily?sort=-marketCap",
+	},
+	{
+		name:   "sortEntValAsc",
+		ticker: "AAPL",
+		params: &DailyFundamentalParams{
+			Sort: EntValAsc,
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily?sort=enterpriseVal",
+	},
+	{
+		name:   "sortEntValDesc",
+		ticker: "AAPL",
+		params: &DailyFundamentalParams{
+			Sort: EntValDesc,
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily?sort=-enterpriseVal",
+	},
+	{
+		name:   "sortPERatioAsc",
+		ticker: "AAPL",
+		params: &DailyFundamentalParams{
+			Sort: PERatioAsc,
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily?sort=peRatio",
+	},
+	{
+		name:   "sortPERatioDesc",
+		ticker: "AAPL",
+		params: &DailyFundamentalParams{
+			Sort: PERatioDesc,
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily?sort=-peRatio",
+	},
+	{
+		name:   "sortPBRatioAsc",
+		ticker: "AAPL",
+		params: &DailyFundamentalParams{
+			Sort: PBRatioAsc,
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily?sort=pbRatio",
+	},
+	{
+		name:   "sortPBRatioDesc",
+		ticker: "AAPL",
+		params: &DailyFundamentalParams{
+			Sort: PBRatioDesc,
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily?sort=-pbRatio",
+	},
+	{
+		name:   "sortTrailPEGAsc",
+		ticker: "AAPL",
+		params: &DailyFundamentalParams{
+			Sort: TrailPEGAsc,
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily?sort=trailingPEG1Y",
+	},
+	{
+		name:   "sortTrailPEGDesc",
+		ticker: "AAPL",
+		params: &DailyFundamentalParams{
+			Sort: TrailPEGDesc,
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily?sort=-trailingPEG1Y",
+	},
+	{
+		name:   "respFormatJson",
+		ticker: "AAPL",
+		params: &DailyFundamentalParams{
+			RespFormat: JSON,
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily?format=json",
+	},
+	{
+		name:   "respFormatCsv",
+		ticker: "AAPL",
+		params: &DailyFundamentalParams{
+			RespFormat: CSV,
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily?format=csv",
+	},
+	{
+		name:   "allParams",
+		ticker: "AAPL",
+		params: &DailyFundamentalParams{
+			StartDate:  startDate,
+			EndDate:    endDate,
+			Sort:       DateDesc,
+			RespFormat: JSON,
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/AAPL/daily?startDate=2022-01-01" +
+			"&endDate=2024-01-01&sort=-date&format=json",
+	},
+}
+
+func TestDailyFundamentalUrl(t *testing.T) {
+	type args struct {
+		ticker      string
+		queryParams *DailyFundamentalParams
+	}
+	type test struct {
+		name string
+		args args
+		want string
+	}
+	var tests []test
+
+	// Add common tests
+	for _, tt := range commonDailyFundamentalTests {
+		tests = append(tests, struct {
+			name string
+			args args
+			want string
+		}{
+			name: tt.name,
+			args: args{
+				ticker:      tt.ticker,
+				queryParams: tt.params,
+			},
+			want: tt.url,
+		})
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := DailyFundamentalUrl(tt.args.ticker, tt.args.queryParams); got != tt.want {
+				t.Errorf("DailyFundamentalUrl() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestClient_DailyFundamental(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+
+	type args struct {
+		ctx         context.Context
+		ticker      string
+		queryParams *DailyFundamentalParams
+	}
+	type test struct {
+		name    string
+		args    args
+		wantErr bool
+	}
+	var tests []test
+
+	// Add common tests
+	for _, tt := range commonDailyFundamentalTests {
+		tests = append(tests, struct {
+			name    string
+			args    args
+			wantErr bool
+		}{
+			name: tt.name,
+			args: args{
+				ctx:         ctx,
+				ticker:      tt.ticker,
+				queryParams: tt.params,
+			},
+			wantErr: false,
+		})
+	}
+
+	// Add invalid argument tests
+	tests = append(tests, []test{
+		{
+			name: "invalidSort",
+			args: args{
+				ctx: ctx,
+				queryParams: &DailyFundamentalParams{
+					Sort: "BAD SORT",
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "invalidRespFormat",
+			args: args{
+				ctx: ctx,
+				queryParams: &DailyFundamentalParams{
+					RespFormat: "BAD FORMAT",
+				},
+			},
+			wantErr: true,
+		},
+	}...)
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			if err := liveTest[[]DailyFundamental]("DailyFundamental()", tt.wantErr, func() ([]DailyFundamental, error) {
+				return getClient().DailyFundamental(tt.args.ctx, tt.args.ticker, tt.args.queryParams)
+			}); err != nil {
+				t.Error(err)
+			}
+		})
+	}
+}

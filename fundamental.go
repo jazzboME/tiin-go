@@ -110,11 +110,7 @@ func (c *Client) StmtDataFlat(ctx context.Context, ticker string,
 	}
 
 	// Parse
-	var format string
-	if queryParams != nil {
-		format = queryParams.RespFormat
-	}
-	return Parse[[]StmtDataFlat](rawBytes, format)
+	return Parse[[]StmtDataFlat](rawBytes, queryParams.RespFormat)
 }
 
 // StmtDataNested returns the statement values response data for the given ticker
@@ -139,11 +135,7 @@ func (c *Client) StmtDataNested(ctx context.Context, ticker string,
 	}
 
 	// Parse
-	var format string
-	if queryParams != nil {
-		format = queryParams.RespFormat
-	}
-	return Parse[[]StmtDataNested](rawBytes, format)
+	return Parse[[]StmtDataNested](rawBytes, queryParams.RespFormat)
 }
 
 // StmtDataRaw functions the same as StmtDataFlat and StmtDataNested, except the raw
@@ -225,28 +217,38 @@ func StmtDataUrl(ticker string, queryParams *StmtDataParams) string {
 	return url.String()
 }
 
+type DailyFundamentalParams struct {
+	StartDate  time.Time
+	EndDate    time.Time
+	Sort       Sort
+	RespFormat Format
+}
+
 // DailyFundamental returns the daily fundamental response data for the given ticker
 // with the provided params from the [Fundamentals].2.6.4 daily Data Endpoint.
 //
 // Any zero value arguments will be left off the query string & whatever Tiingo's
 // default for an empty query string will be returned.
 func (c *Client) DailyFundamental(ctx context.Context, ticker string,
-	startDate, endDate time.Time, sort Sort, respFormat Format) ([]byte, error) {
-	// Build url
-	url := DailyFundamentalUrl(ticker, startDate, endDate, sort, respFormat)
-
+	queryParams *DailyFundamentalParams) ([]DailyFundamental, error) {
 	// Fetch the data
-	return c.get(ctx, url)
+	rawBytes, err := c.DailyFundamentalRaw(ctx, ticker, queryParams)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get data: %w", err)
+	}
+
+	// Parse
+	var format string
+	if queryParams != nil {
+		format = queryParams.RespFormat
+	}
+	return Parse[[]DailyFundamental](rawBytes, format)
 }
 
-// DefaultDailyFundamental returns the statement values response data for the given ticker
-// from the [Fundamentals].2.6.4 daily Data Endpoint.
-//
-// Only the required params are added to the url & query string, everything else will
-// be the Tiingo defaults.
-func (c *Client) DefaultDailyFundamental(ctx context.Context, ticker string) ([]byte, error) {
+func (c *Client) DailyFundamentalRaw(ctx context.Context, ticker string,
+	queryParams *DailyFundamentalParams) ([]byte, error) {
 	// Build url
-	url := DailyFundamentalUrl(ticker, time.Time{}, time.Time{}, "", "")
+	url := DailyFundamentalUrl(ticker, queryParams)
 
 	// Fetch the data
 	return c.get(ctx, url)
@@ -256,7 +258,7 @@ func (c *Client) DefaultDailyFundamental(ctx context.Context, ticker string) ([]
 // from the [Fundamentals].2.6.4 daily Data Endpoint.
 //
 // Any zero value arguments will be left off the query string.
-func DailyFundamentalUrl(ticker string, startDate, endDate time.Time, sort Sort, respFormat Format) string {
+func DailyFundamentalUrl(ticker string, queryParams *DailyFundamentalParams) string {
 	var url strings.Builder
 
 	// Build base endpoint url
@@ -264,14 +266,19 @@ func DailyFundamentalUrl(ticker string, startDate, endDate time.Time, sort Sort,
 	url.WriteString(ticker)
 	url.WriteString("/daily")
 
+	// No query params to add
+	if queryParams == nil {
+		return url.String()
+	}
+
 	// Build query string
 	first := true
-	if !startDate.IsZero() {
+	if !queryParams.StartDate.IsZero() {
 		url.WriteString("?startDate=")
-		url.WriteString(startDate.Format("2006-01-02"))
+		url.WriteString(queryParams.StartDate.Format("2006-01-02"))
 		first = false
 	}
-	if !endDate.IsZero() {
+	if !queryParams.EndDate.IsZero() {
 		if first {
 			url.WriteString("?")
 			first = false
@@ -279,9 +286,9 @@ func DailyFundamentalUrl(ticker string, startDate, endDate time.Time, sort Sort,
 			url.WriteString("&")
 		}
 		url.WriteString("endDate=")
-		url.WriteString(endDate.Format("2006-01-02"))
+		url.WriteString(queryParams.EndDate.Format("2006-01-02"))
 	}
-	if sort != "" {
+	if queryParams.Sort != "" {
 		if first {
 			url.WriteString("?")
 			first = false
@@ -289,16 +296,16 @@ func DailyFundamentalUrl(ticker string, startDate, endDate time.Time, sort Sort,
 			url.WriteString("&")
 		}
 		url.WriteString("sort=")
-		url.WriteString(sort)
+		url.WriteString(queryParams.Sort)
 	}
-	if respFormat != "" {
+	if queryParams.RespFormat != "" {
 		if first {
 			url.WriteString("?")
 		} else {
 			url.WriteString("&")
 		}
 		url.WriteString("format=")
-		url.WriteString(respFormat)
+		url.WriteString(queryParams.RespFormat)
 	}
 
 	return url.String()
