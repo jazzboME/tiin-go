@@ -3,12 +3,6 @@ package tiingo
 import (
 	"context"
 	"testing"
-	"time"
-)
-
-var (
-	startDate = time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
-	endDate   = time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
 )
 
 func TestClient_EodPrice(t *testing.T) {
@@ -463,15 +457,8 @@ func TestEodPriceUrl(t *testing.T) {
 		{
 			name: "zeroValParams",
 			args: args{
-				ticker: "AAPL",
-				queryParams: &EodPriceParams{
-					startDate:    time.Time{},
-					endDate:      time.Time{},
-					resampleFreq: "",
-					sort:         "",
-					respFormat:   "",
-					columns:      nil,
-				},
+				ticker:      "AAPL",
+				queryParams: &EodPriceParams{},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices",
 		},

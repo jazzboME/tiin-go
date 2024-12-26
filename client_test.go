@@ -2,21 +2,27 @@ package tiingo
 
 import (
 	"fmt"
-	"log/slog"
 	"os"
 	"reflect"
 	"sync"
+	"time"
 
 	"golang.org/x/time/rate"
 )
 
 var (
 	getClient = sync.OnceValue[*Client](func() *Client {
-		return NewClient(os.Getenv("TIINGO_TOKEN"), func(client *Client) {
+		apiToken, ok := os.LookupEnv("TIINGO_TOKEN")
+		if !ok {
+			panic("TIINGO_TOKEN must be set if doing a live client test")
+		}
+		return NewClient(apiToken, func(client *Client) {
 			client.RateLimiter = rate.NewLimiter(10, 1)
-			client.Logger = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+			// client.Logger = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
 		})
 	})
+	startDate = time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
+	endDate   = time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
 )
 
 func liveTest[T any](fName string, wantErr bool, execute func() (T, error)) error {

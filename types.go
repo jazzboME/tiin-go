@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gocarina/gocsv"
@@ -410,6 +411,9 @@ func (i *IexTopOfBook) UnmarshalCSVWithFields(key, value string) error {
 		}
 		i.Last = f
 	case "lastSize":
+		// This can sometimes come in as a float formatted as x.0000, so we
+		// need to trim the "." and trailing zeros
+		value = strings.Split(strings.TrimRight(value, "0"), ".")[0]
 		int_, err := parseInt(value)
 		if err != nil {
 			return err
