@@ -245,6 +245,8 @@ func (c *Client) DailyFundamental(ctx context.Context, ticker string,
 	return Parse[[]DailyFundamental](rawBytes, format)
 }
 
+// DailyFundamentalRaw functions the same as DailyFundamental, except the raw
+// response bytes are returned instead of the parsed type.
 func (c *Client) DailyFundamentalRaw(ctx context.Context, ticker string,
 	queryParams *DailyFundamentalParams) ([]byte, error) {
 	// Build url
@@ -257,7 +259,9 @@ func (c *Client) DailyFundamentalRaw(ctx context.Context, ticker string,
 // DailyFundamentalUrl returns a built url for with the provided params
 // from the [Fundamentals].2.6.4 daily Data Endpoint.
 //
-// Any zero value arguments will be left off the query string.
+// If queryParams is non-nil, any non-zero struct values will be applied to the
+// url. Zero value items will be left out and Tiingo defaults will be used. A
+// nil queryParams results in all Tiingo defaults.
 func DailyFundamentalUrl(ticker string, queryParams *DailyFundamentalParams) string {
 	var url strings.Builder
 
@@ -319,8 +323,9 @@ type FundamentalMetadataParams struct {
 // FundamentalMetadata returns the daily fundamental metadata for the given ticker(s)
 // with the provided params from the [Fundamentals].2.6.5 MetaData Endpoint.
 //
-// Any zero value arguments will be left off the query string & whatever Tiingo's
-// default for an empty query string will be returned.
+// If queryParams is non-nil, any non-zero struct values will be applied to the
+// url. Zero value items will be left out and Tiingo defaults will be used. A
+// nil queryParams results in all Tiingo defaults.
 func (c *Client) FundamentalMetadata(ctx context.Context,
 	queryParams *FundamentalMetadataParams) ([]FundamentalMetadata, error) {
 	// Fetch the data
@@ -337,6 +342,8 @@ func (c *Client) FundamentalMetadata(ctx context.Context,
 	return Parse[[]FundamentalMetadata](rawBytes, format)
 }
 
+// FundamentalMetadataRaw functions the same as FundamentalMetadata, except the
+// raw response bytes are returned instead of the parsed type.
 func (c *Client) FundamentalMetadataRaw(ctx context.Context,
 	queryParams *FundamentalMetadataParams) ([]byte, error) {
 	// Build url
@@ -349,7 +356,9 @@ func (c *Client) FundamentalMetadataRaw(ctx context.Context,
 // FundamentalMetadataUrl returns a built url for with the provided params
 // from the [Fundamentals].2.6.5 MetaData Endpoint
 //
-// Any zero value arguments will be left off the query string.
+// If queryParams is non-nil, any non-zero struct values will be applied to the
+// url. Zero value items will be left out and Tiingo defaults will be used. A
+// nil queryParams results in all Tiingo defaults.
 func FundamentalMetadataUrl(queryParams *FundamentalMetadataParams) string {
 	var url strings.Builder
 
