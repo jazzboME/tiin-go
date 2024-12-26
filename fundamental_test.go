@@ -346,9 +346,11 @@ func TestClient_StmtDataFlat(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			if err := liveTest[[]StmtDataFlat]("StmtDataFlat()", tt.wantErr, func() ([]StmtDataFlat, error) {
-				return getClient().StmtDataFlat(tt.args.ctx, tt.args.ticker, tt.args.queryParams)
-			}); err != nil {
+			if err := liveTest[[]StmtDataFlat]("StmtDataFlat()", tt.wantErr,
+				func() ([]StmtDataFlat, error) {
+					return getClient().StmtDataFlat(tt.args.ctx, tt.args.ticker, tt.args.queryParams)
+				},
+			); err != nil {
 				t.Error(err)
 			}
 		})
@@ -415,9 +417,11 @@ func TestClient_StmtDataNested(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			if err := liveTest[[]StmtDataNested]("StmtDataNested()", tt.wantErr, func() ([]StmtDataNested, error) {
-				return getClient().StmtDataNested(tt.args.ctx, tt.args.ticker, tt.args.queryParams)
-			}); err != nil {
+			if err := liveTest[[]StmtDataNested]("StmtDataNested()", tt.wantErr,
+				func() ([]StmtDataNested, error) {
+					return getClient().StmtDataNested(tt.args.ctx, tt.args.ticker, tt.args.queryParams)
+				},
+			); err != nil {
 				t.Error(err)
 			}
 		})
@@ -681,9 +685,162 @@ func TestClient_DailyFundamental(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			if err := liveTest[[]DailyFundamental]("DailyFundamental()", tt.wantErr, func() ([]DailyFundamental, error) {
-				return getClient().DailyFundamental(tt.args.ctx, tt.args.ticker, tt.args.queryParams)
-			}); err != nil {
+			if err := liveTest[[]DailyFundamental]("DailyFundamental()", tt.wantErr,
+				func() ([]DailyFundamental, error) {
+					return getClient().DailyFundamental(tt.args.ctx, tt.args.ticker, tt.args.queryParams)
+				},
+			); err != nil {
+				t.Error(err)
+			}
+		})
+	}
+}
+
+var commonFundamentalMetadataTests = []struct {
+	name   string
+	params *FundamentalMetadataParams
+	url    string
+}{
+	{
+		name:   "nilParams",
+		params: nil,
+		url:    "https://api.tiingo.com/tiingo/fundamentals/meta",
+	},
+	{
+		name:   "zeroParams",
+		params: &FundamentalMetadataParams{},
+		url:    "https://api.tiingo.com/tiingo/fundamentals/meta",
+	},
+	{
+		name: "oneTicker",
+		params: &FundamentalMetadataParams{
+			Tickers: []string{"AAPL"},
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/meta?tickers=AAPL",
+	},
+	{
+		name: "manyTicker",
+		params: &FundamentalMetadataParams{
+			Tickers: []string{"AAPL", "MSFT", "GOOG"},
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/meta?tickers=AAPL,MSFT,GOOG",
+	},
+	{
+		name: "respFormatJson",
+		params: &FundamentalMetadataParams{
+			RespFormat: JSON,
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/meta?format=json",
+	},
+	{
+		name: "respFormatCsv",
+		params: &FundamentalMetadataParams{
+			RespFormat: CSV,
+		},
+		url: "https://api.tiingo.com/tiingo/fundamentals/meta?format=csv",
+	},
+}
+
+func TestFundamentalMetadataUrl(t *testing.T) {
+	type args struct {
+		ticker      string
+		queryParams *FundamentalMetadataParams
+	}
+	type test struct {
+		name string
+		args args
+		want string
+	}
+	var tests []test
+
+	// Add common tests
+	for _, tt := range commonFundamentalMetadataTests {
+		tests = append(tests, struct {
+			name string
+			args args
+			want string
+		}{
+			name: tt.name,
+			args: args{
+				queryParams: tt.params,
+			},
+			want: tt.url,
+		})
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := FundamentalMetadataUrl(tt.args.queryParams); got != tt.want {
+				t.Errorf("FundamentalMetadataUrl() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestClient_FundamentalMetadata(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+
+	type args struct {
+		ctx         context.Context
+		ticker      string
+		queryParams *FundamentalMetadataParams
+	}
+	type test struct {
+		name    string
+		args    args
+		wantErr bool
+	}
+	var tests []test
+
+	// Add common tests
+	for _, tt := range commonFundamentalMetadataTests {
+		tests = append(tests, struct {
+			name    string
+			args    args
+			wantErr bool
+		}{
+			name: tt.name,
+			args: args{
+				ctx:         ctx,
+				queryParams: tt.params,
+			},
+			wantErr: false,
+		})
+	}
+
+	// Add invalid argument tests
+	tests = append(tests, []test{
+		{
+			name: "invalidRespFormat",
+			args: args{
+				ctx: ctx,
+				queryParams: &FundamentalMetadataParams{
+					RespFormat: "BAD FORMAT",
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "invalidTickers",
+			args: args{
+				ctx: ctx,
+				queryParams: &FundamentalMetadataParams{
+					Tickers: []string{"BAD TICKER// -/"},
+				},
+			},
+			wantErr: true,
+		},
+	}...)
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			if err := liveTest[[]FundamentalMetadata]("FundamentalMetadata()", tt.wantErr,
+				func() ([]FundamentalMetadata, error) {
+					return getClient().FundamentalMetadata(tt.args.ctx, tt.args.queryParams)
+				},
+			); err != nil {
 				t.Error(err)
 			}
 		})

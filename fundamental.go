@@ -311,27 +311,36 @@ func DailyFundamentalUrl(ticker string, queryParams *DailyFundamentalParams) str
 	return url.String()
 }
 
+type FundamentalMetadataParams struct {
+	Tickers    []string
+	RespFormat Format
+}
+
 // FundamentalMetadata returns the daily fundamental metadata for the given ticker(s)
 // with the provided params from the [Fundamentals].2.6.5 MetaData Endpoint.
 //
 // Any zero value arguments will be left off the query string & whatever Tiingo's
 // default for an empty query string will be returned.
-func (c *Client) FundamentalMetadata(ctx context.Context, tickers []string, respFormat Format) ([]byte, error) {
-	// Build url
-	url := FundamentalMetadataUrl(tickers, respFormat)
-
+func (c *Client) FundamentalMetadata(ctx context.Context,
+	queryParams *FundamentalMetadataParams) ([]FundamentalMetadata, error) {
 	// Fetch the data
-	return c.get(ctx, url)
+	rawBytes, err := c.FundamentalMetadataRaw(ctx, queryParams)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get data: %w", err)
+	}
+
+	// Parse
+	var format string
+	if queryParams != nil {
+		format = queryParams.RespFormat
+	}
+	return Parse[[]FundamentalMetadata](rawBytes, format)
 }
 
-// DefaultFundamentalMetadata returns the statement values response data for the
-// all tickers from the [Fundamentals].2.6.5 MetaData Endpoint.
-//
-// Only the required params are added to the url & query string, everything else
-// will be the Tiingo defaults.
-func (c *Client) DefaultFundamentalMetadata(ctx context.Context) ([]byte, error) {
+func (c *Client) FundamentalMetadataRaw(ctx context.Context,
+	queryParams *FundamentalMetadataParams) ([]byte, error) {
 	// Build url
-	url := FundamentalMetadataUrl(nil, "")
+	url := FundamentalMetadataUrl(queryParams)
 
 	// Fetch the data
 	return c.get(ctx, url)
@@ -341,27 +350,32 @@ func (c *Client) DefaultFundamentalMetadata(ctx context.Context) ([]byte, error)
 // from the [Fundamentals].2.6.5 MetaData Endpoint
 //
 // Any zero value arguments will be left off the query string.
-func FundamentalMetadataUrl(tickers []string, respFormat Format) string {
+func FundamentalMetadataUrl(queryParams *FundamentalMetadataParams) string {
 	var url strings.Builder
 
 	// Build base endpoint url
 	url.WriteString("https://api.tiingo.com/tiingo/fundamentals/meta")
 
+	// No query params to add
+	if queryParams == nil {
+		return url.String()
+	}
+
 	// Build query string
 	first := true
-	if len(tickers) > 0 {
+	if len(queryParams.Tickers) > 0 {
 		url.WriteString("?tickers=")
-		url.WriteString(strings.Join(tickers, ","))
+		url.WriteString(strings.Join(queryParams.Tickers, ","))
 		first = false
 	}
-	if respFormat != "" {
+	if queryParams.RespFormat != "" {
 		if first {
 			url.WriteString("?")
 		} else {
 			url.WriteString("&")
 		}
 		url.WriteString("format=")
-		url.WriteString(respFormat)
+		url.WriteString(queryParams.RespFormat)
 	}
 
 	return url.String()
