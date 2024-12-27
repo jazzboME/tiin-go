@@ -25,41 +25,68 @@ capabilities:
 package main
 
 import (
-    "context"
-    "encoding/json"
-    "fmt"
-    "log/slog"
-    "net/http"
-    "os"
+	"context"
+	"encoding/json"
+	"fmt"
+	"log/slog"
+	"net/http"
+	"os"
+	"time"
 
-    tiingo "github.com/the-trader-dev/tiin-go"
-    "golang.org/x/time/rate"
+	tiingo "github.com/the-trader-dev/tiin-go"
+	"golang.org/x/time/rate"
 )
 
-func main() { 
-    // Initialize client
-    client := tiingo.NewClient(os.Getenv("YOUR_TIINGO_TOKEN"))
+func main() {
+	ctx := context.Background()
 
-    // You can optionally set a rate limiter, enable logging, and change the
-    // default http client
-    client.RateLimiter = rate.NewLimiter(10, 1)
-    client.Logger = slog.New(slog.NewTextHandler(os.Stdout, nil))
-    client.HttpClient = &http.Client{}
+	// Initialize client
+	c := tiingo.NewClient(os.Getenv("YOUR_TIINGO_TOKEN"),
+		// You can optionally set a rate limiter, enable logging, and change the
+		// default http client
+		tiingo.WithLogger(slog.Default()),
+		tiingo.WithHttpClient(&http.Client{}),
+		tiingo.WithRateLimiter(rate.NewLimiter(10, 1)),
+	)
 
-    // Make request
-    rawBytes, err := client.DefaultEodMetadata(context.Background(), "AAPL")
-    if err != nil {
-        panic(err)
-    }
+	// Get typed data with whatever the Tiingo default params are
+	fiveMinuteCandles, err := c.IexHistory(ctx, "AAPL", nil)
+	if err != nil {
+		panic(err)
+	}
 
-    // Unmarshal the response
-    var metadata tiingo.EodMetadata
-    if err = json.Unmarshal(rawBytes, &metadata); err != nil {
-        panic(err)
-    }
+	// Get typed data with custom params
+	oneMinuteCandles, err := c.IexHistory(ctx, "AAPL", &tiingo.IexHistoryParams{
+		StartDate:    time.Date(2024, 01, 02, 14, 30, 0, 0, time.UTC),
+		EndDate:      time.Date(2024, 01, 02, 15, 00, 0, 0, time.UTC),
+		ResampleFreq: tiingo.OneMin,
+		AfterHours:   false,
+		ForceFill:    true,
+		RespFormat:   tiingo.CSV,
+	})
+	if err != nil {
+		panic(err)
+	}
 
-    fmt.Println("Apple's metadata:", metadata)
+	// Or get the raw bytes and store/handle yourself
+	rawJsonBytes, err := c.IexHistoryRaw(ctx, "AAPL", &tiingo.IexHistoryParams{
+		StartDate:    time.Date(2024, 01, 02, 14, 30, 0, 0, time.UTC),
+		EndDate:      time.Date(2024, 01, 02, 15, 00, 0, 0, time.UTC),
+		ResampleFreq: tiingo.FifteenMin,
+	})
+	if err != nil {
+		panic(err)
+	}
+	var fifteenMinuteCandles []tiingo.IexPrice
+	if err = json.Unmarshal(rawJsonBytes, &fiveMinuteCandles); err != nil {
+		panic(err)
+	}
+
+	fmt.Println("One minute candles:", oneMinuteCandles)
+	fmt.Println("Five minute candles:", fiveMinuteCandles)
+	fmt.Println("Fifteen minute candles:", fifteenMinuteCandles)
 }
+
 ```
 
 ### URL Builder
@@ -85,7 +112,7 @@ import (
 
 func main() {
     // Build url
-    url := tiingo.EodMetadataUrl("AAPL", tiingo.JSON)
+    url := tiingo.EodMetadataUrl("AAPL")
 
     // Build request
     req, err := http.NewRequest(http.MethodGet, url, nil)
@@ -140,7 +167,7 @@ import (
 )
 
 func main() {
-    // Raw bytes from some endpoint you requested
+    // Raw bytes from some endpoint you requested yourself
     var jsonBytes []byte
     var csvBytes []byte
 
@@ -175,9 +202,11 @@ err := json.Unmarshal(rawJsonBytes, &TiingoGolangType)
 Any package that knows how to read csv struct tags should be able to marshal/unmarshal
 successfully. However, it has only been tested with & internally uses with [gocsv](https://github.com/gocarina/gocsv).
 
-Initially, the plan was to implement custom csv marshalling/unmarshalling to minimize 
-dependencies. However, the vast quantity of types made compromising with an external
-dependency a lot more attractive in terms of the overall maintenance overhead. 
+The use of gocsv is not set in stone. I do not like having dependencies just to have 
+them. The goal is to have custom csv marshalling/unmarshalling at some point, however
+gocsv is a good alternative until then. If gocsv is ever removed, it will not be a 
+breaking api change & csv tags will still be kept to keep some level of backwards
+compatability. 
 ```go
 err := gocsv.UnmarshaBytes(rawCsvBytes, &TiingoGolangType)
 ```
