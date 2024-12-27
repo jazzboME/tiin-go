@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
+
+	"github.com/gocarina/gocsv"
 )
 
 const (
@@ -52,8 +55,8 @@ const (
 	SplitFactorDesc Sort = "-splitFactor"
 	MktCapAsc       Sort = "marketCap"
 	MktCapDesc      Sort = "-marketCap"
-	EntValAsc       Sort = "enterpriseValue"
-	EntValDesc      Sort = "-enterpriseValue"
+	EntValAsc       Sort = "enterpriseVal"
+	EntValDesc      Sort = "-enterpriseVal"
 	PERatioAsc      Sort = "peRatio"
 	PERatioDesc     Sort = "-peRatio"
 	PBRatioAsc      Sort = "pbRatio"
@@ -408,6 +411,11 @@ func (i *IexTopOfBook) UnmarshalCSVWithFields(key, value string) error {
 		}
 		i.Last = f
 	case "lastSize":
+		// This can sometimes come in as a float formatted as x.0000, so we
+		// need to trim the "." and trailing zeros
+		if strings.Contains(value, ".") {
+			value = strings.Split(strings.TrimRight(value, "0"), ".")[0]
+		}
 		int_, err := parseInt(value)
 		if err != nil {
 			return err
@@ -889,4 +897,25 @@ func parseTimeMultiLayout(layouts []string, value string) (time.Time, error) {
 	}
 
 	return time.Time{}, fmt.Errorf("multipl errors: %v", errs)
+}
+
+// Parse takes in raw bytes and parses them according to the format. Valid
+// formats are CSV or JSON (an empty string defaults to JSON).
+func Parse[T any](rawBytes []byte, format Format) (T, error) {
+	var data T
+	var err error
+	switch format {
+	case JSON, "":
+		err = json.Unmarshal(rawBytes, &data)
+	case CSV:
+		err = gocsv.UnmarshalBytes(rawBytes, &data)
+	default:
+		return data, fmt.Errorf("format not recognized: %s", format)
+	}
+
+	if err != nil {
+		return data, fmt.Errorf("failed to parse raw bytes: %w", err)
+	}
+
+	return data, nil
 }

@@ -2,32 +2,45 @@ package tiingo
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"strings"
 )
 
+type SearchParams struct {
+	ExactMatch      bool
+	IncludeDelisted bool
+	Limit           int
+	RespFormat      Format
+	Columns         []string
+}
+
 // Search returns the search result response for a given query from the
 // [Utility].4.1.2 Search Endpoint.
 //
-// Any zero value arguments will be left off the query string & whatever Tiingo's
-// default for an empty query string will be returned.
-func (c *Client) Search(ctx context.Context, query string, exactMatch, includeDelisted bool,
-	limit int, respFormat Format, columns []string) ([]byte, error) {
-	// Build url
-	url := SearchUrl(query, exactMatch, includeDelisted, limit, respFormat, columns)
-
+// If queryParams is non-nil, any non-zero struct values will be applied to the
+// url. Zero value items will be left out and Tiingo defaults will be used. A
+// nil queryParams results in all Tiingo defaults.
+func (c *Client) Search(ctx context.Context, query string, queryParams *SearchParams) ([]SearchResult, error) {
 	// Fetch the data
-	return c.get(ctx, url)
+	rawBytes, err := c.SearchRaw(ctx, query, queryParams)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get data: %w", err)
+	}
+
+	// Parse
+	var format string
+	if queryParams != nil {
+		format = queryParams.RespFormat
+	}
+	return Parse[[]SearchResult](rawBytes, format)
 }
 
-// DefaultSearch search result response for a given query from the
-// [Utility].4.1.2 Search Endpoint.
-//
-// Only the required params are added to the url & query string, everything else
-// will be the Tiingo defaults.
-func (c *Client) DefaultSearch(ctx context.Context, query string) ([]byte, error) {
+// SearchRaw functions the same as Search, except the raw response bytes are
+// returned instead of the parsed type.
+func (c *Client) SearchRaw(ctx context.Context, query string, queryParams *SearchParams) ([]byte, error) {
 	// Build url
-	url := SearchUrl(query, false, false, 0, "", nil)
+	url := SearchUrl(query, queryParams)
 
 	// Fetch the data
 	return c.get(ctx, url)
@@ -36,22 +49,28 @@ func (c *Client) DefaultSearch(ctx context.Context, query string) ([]byte, error
 // SearchUrl returns a built url for the given query from the
 // [Utility].4.1.2 Search Endpoint.
 //
-// Any zero value arguments will be left off the query string.
-func SearchUrl(query string, exactTickerMatch, includeDelisted bool, limit int,
-	respFormat Format, columns []string) string {
+// If queryParams is non-nil, any non-zero struct values will be applied to the
+// url. Zero value items will be left out and Tiingo defaults will be used. A
+// nil queryParams results in all Tiingo defaults.
+func SearchUrl(query string, queryParams *SearchParams) string {
 	var url strings.Builder
 
 	// Build base endpoint url
 	url.WriteString("https://api.tiingo.com/tiingo/utilities/search/")
 	url.WriteString(query)
 
+	// No query params to add
+	if queryParams == nil {
+		return url.String()
+	}
+
 	// Build query string
 	first := true
-	if exactTickerMatch {
+	if queryParams.ExactMatch {
 		url.WriteString("?exactTickerMatch=true")
 		first = false
 	}
-	if includeDelisted {
+	if queryParams.IncludeDelisted {
 		if first {
 			url.WriteString("?")
 			first = false
@@ -60,7 +79,7 @@ func SearchUrl(query string, exactTickerMatch, includeDelisted bool, limit int,
 		}
 		url.WriteString("includeDelisted=true")
 	}
-	if limit > 0 {
+	if queryParams.Limit > 0 {
 		if first {
 			url.WriteString("?")
 			first = false
@@ -68,9 +87,9 @@ func SearchUrl(query string, exactTickerMatch, includeDelisted bool, limit int,
 			url.WriteString("&")
 		}
 		url.WriteString("limit=")
-		url.WriteString(strconv.Itoa(limit))
+		url.WriteString(strconv.Itoa(queryParams.Limit))
 	}
-	if respFormat != "" {
+	if queryParams.RespFormat != "" {
 		if first {
 			url.WriteString("?")
 			first = false
@@ -78,16 +97,16 @@ func SearchUrl(query string, exactTickerMatch, includeDelisted bool, limit int,
 			url.WriteString("&")
 		}
 		url.WriteString("format=")
-		url.WriteString(respFormat)
+		url.WriteString(queryParams.RespFormat)
 	}
-	if len(columns) > 0 {
+	if len(queryParams.Columns) > 0 {
 		if first {
 			url.WriteString("?")
 		} else {
 			url.WriteString("&")
 		}
 		url.WriteString("columns=")
-		url.WriteString(strings.Join(columns, ","))
+		url.WriteString(strings.Join(queryParams.Columns, ","))
 	}
 
 	return url.String()

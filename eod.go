@@ -2,32 +2,50 @@ package tiingo
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 )
 
-// EodPrice returns the daily price response data for a given ticker with the provided
-// params from the [End-of-Day].2.1.2 End-of-Day Endpoint.
-//
-// Any zero value arguments will be left off the query string & whatever Tiingo's
-// default for an empty query string will be returned.
-func (c *Client) EodPrice(ctx context.Context, ticker string, startDate, endDate time.Time,
-	resampleFreq EodFreq, sort Sort, respFormat Format, columns []string) ([]byte, error) {
-	// Build URL
-	url := EodPriceUrl(ticker, startDate, endDate, resampleFreq, sort, respFormat, columns)
-
-	// Fetch the data
-	return c.get(ctx, url)
+// EodPriceParams represents the query parameters for the [End-of-Day].2.1.2
+// End-of-Day Endpoint
+type EodPriceParams struct {
+	startDate    time.Time
+	endDate      time.Time
+	resampleFreq EodFreq
+	sort         Sort
+	respFormat   Format
+	columns      []string
 }
 
-// DefaultEodPrice returns the daily price response data for the given ticker from the
-// [End-of-Day].2.1.2 End-of-Day Endpoint.
+// EodPrice returns the daily price response data for a given ticker with the
+// provided params from the [End-of-Day].2.1.2 End-of-Day Endpoint.
 //
-// Only the required params are added to the url & query string, everything else
-// will be the Tiingo defaults.
-func (c *Client) DefaultEodPrice(ctx context.Context, symbol string) ([]byte, error) {
+// If queryParams is non-nil, any non-zero struct values will be applied to the
+// url. Zero value items will be left out and Tiingo defaults will be used. A
+// nil queryParams results in all Tiingo defaults.
+func (c *Client) EodPrice(ctx context.Context, ticker string,
+	queryParams *EodPriceParams) ([]EodPrice, error) {
+	// Fetch the data
+	rawBytes, err := c.EodPriceRaw(ctx, ticker, queryParams)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get data: %w", err)
+	}
+
+	// Parse
+	var format string
+	if queryParams != nil {
+		format = queryParams.respFormat
+	}
+	return Parse[[]EodPrice](rawBytes, format)
+}
+
+// EodPriceRaw functions the same as EodPrice, except the raw response bytes are
+// returned instead of the parsed type.
+func (c *Client) EodPriceRaw(ctx context.Context, ticker string,
+	queryParams *EodPriceParams) ([]byte, error) {
 	// Build URL
-	url := EodPriceUrl(symbol, time.Time{}, time.Time{}, "", "", "", nil)
+	url := EodPriceUrl(ticker, queryParams)
 
 	// Fetch the data
 	return c.get(ctx, url)
@@ -36,9 +54,10 @@ func (c *Client) DefaultEodPrice(ctx context.Context, symbol string) ([]byte, er
 // EodPriceUrl returns a built url for the given ticker with the provided params
 // from the [End-of-Day].2.1.2 End-of-Day Endpoint.
 //
-// Any zero value arguments will be left off the query string.
-func EodPriceUrl(ticker string, startDate, endDate time.Time, resampleFreq EodFreq,
-	sort Sort, respFormat Format, columns []string) string {
+// If queryParams is non-nil, any non-zero struct values will be applied to the
+// url. Zero value items will be left out and Tiingo defaults will be used. A
+// nil queryParams results in all Tiingo defaults.
+func EodPriceUrl(ticker string, queryParams *EodPriceParams) string {
 	var url strings.Builder
 
 	// Build base endpoint url
@@ -46,14 +65,19 @@ func EodPriceUrl(ticker string, startDate, endDate time.Time, resampleFreq EodFr
 	url.WriteString(ticker)
 	url.WriteString("/prices")
 
+	// No query params to add
+	if queryParams == nil {
+		return url.String()
+	}
+
 	// Build query string
 	first := true
-	if !startDate.IsZero() {
+	if !queryParams.startDate.IsZero() {
 		url.WriteString("?startDate=")
-		url.WriteString(startDate.Format("2006-01-02"))
+		url.WriteString(queryParams.startDate.Format("2006-01-02"))
 		first = false
 	}
-	if !endDate.IsZero() {
+	if !queryParams.endDate.IsZero() {
 		if first {
 			url.WriteString("?")
 			first = false
@@ -61,9 +85,9 @@ func EodPriceUrl(ticker string, startDate, endDate time.Time, resampleFreq EodFr
 			url.WriteString("&")
 		}
 		url.WriteString("endDate=")
-		url.WriteString(endDate.Format("2006-01-02"))
+		url.WriteString(queryParams.endDate.Format("2006-01-02"))
 	}
-	if resampleFreq != "" {
+	if queryParams.resampleFreq != "" {
 		if first {
 			url.WriteString("?")
 			first = false
@@ -71,9 +95,9 @@ func EodPriceUrl(ticker string, startDate, endDate time.Time, resampleFreq EodFr
 			url.WriteString("&")
 		}
 		url.WriteString("resampleFreq=")
-		url.WriteString(resampleFreq)
+		url.WriteString(queryParams.resampleFreq)
 	}
-	if sort != "" {
+	if queryParams.sort != "" {
 		if first {
 			url.WriteString("?")
 			first = false
@@ -81,9 +105,9 @@ func EodPriceUrl(ticker string, startDate, endDate time.Time, resampleFreq EodFr
 			url.WriteString("&")
 		}
 		url.WriteString("sort=")
-		url.WriteString(sort)
+		url.WriteString(queryParams.sort)
 	}
-	if respFormat != "" {
+	if queryParams.respFormat != "" {
 		if first {
 			url.WriteString("?")
 			first = false
@@ -91,16 +115,16 @@ func EodPriceUrl(ticker string, startDate, endDate time.Time, resampleFreq EodFr
 			url.WriteString("&")
 		}
 		url.WriteString("format=")
-		url.WriteString(respFormat)
+		url.WriteString(queryParams.respFormat)
 	}
-	if len(columns) > 0 {
+	if len(queryParams.columns) > 0 {
 		if first {
 			url.WriteString("?")
 		} else {
 			url.WriteString("&")
 		}
 		url.WriteString("columns=")
-		url.WriteString(strings.Join(columns, ","))
+		url.WriteString(strings.Join(queryParams.columns, ","))
 	}
 
 	return url.String()
@@ -108,22 +132,22 @@ func EodPriceUrl(ticker string, startDate, endDate time.Time, resampleFreq EodFr
 
 // EodMetadata returns the eod metadata response data for a given ticker
 // from the [End-of-Day].2.1.3 Meta Endpoint
-func (c *Client) EodMetadata(ctx context.Context, ticker string, respFormat Format) ([]byte, error) {
-	// Build URL
-	url := EodMetadataUrl(ticker, respFormat)
+func (c *Client) EodMetadata(ctx context.Context, ticker string) (EodMetadata, error) {
+	// Get the data
+	rawBytes, err := c.EodMetadataRaw(ctx, ticker)
+	if err != nil {
+		return EodMetadata{}, fmt.Errorf("failed to get data: %w", err)
+	}
 
-	// Fetch the data
-	return c.get(ctx, url)
+	// Parse
+	return Parse[EodMetadata](rawBytes, JSON)
 }
 
-// DefaultEodMetadata returns the eod metadata response data for a given ticker
-// // from the [End-of-Day].2.1.3 Meta Endpoint
-//
-// Only the required params are added to the url & query string, everything else
-// will be the Tiingo defaults.
-func (c *Client) DefaultEodMetadata(ctx context.Context, symbol string) ([]byte, error) {
+// EodMetadataRaw functions the same as EodMetadata, except the raw response
+// bytes are returned instead of the parsed type.
+func (c *Client) EodMetadataRaw(ctx context.Context, ticker string) ([]byte, error) {
 	// Build URL
-	url := EodMetadataUrl(symbol, "")
+	url := EodMetadataUrl(ticker)
 
 	// Fetch the data
 	return c.get(ctx, url)
@@ -131,18 +155,6 @@ func (c *Client) DefaultEodMetadata(ctx context.Context, symbol string) ([]byte,
 
 // EodMetadataUrl returns a built url for the given ticker from the
 // [End-of-Day].2.1.3 Meta Endpoint.
-func EodMetadataUrl(ticker string, respFormat Format) string {
-	var url strings.Builder
-
-	// Build base endpoint url
-	url.WriteString("https://api.tiingo.com/tiingo/daily/")
-	url.WriteString(ticker)
-
-	// Build query string
-	if respFormat != "" {
-		url.WriteString("?format=")
-		url.WriteString(respFormat)
-	}
-
-	return url.String()
+func EodMetadataUrl(ticker string) string {
+	return fmt.Sprintf("https://api.tiingo.com/tiingo/daily/%s", ticker)
 }

@@ -131,8 +131,6 @@ func eodEqual(a EodPrice, b EodPrice) bool {
 }
 
 func TestEodEodPrice_UnmarshalCSVWithFields(t *testing.T) {
-	t.Parallel()
-
 	path := "./test_data/eod.csv"
 	if err := testUnmarshal(path, csv_, correctEodPrice, eodEqualFunc); err != nil {
 		t.Fatal(err)
@@ -140,8 +138,6 @@ func TestEodEodPrice_UnmarshalCSVWithFields(t *testing.T) {
 }
 
 func TestEodPrice_UnmarshalJSON(t *testing.T) {
-	t.Parallel()
-
 	path := "./test_data/eod.json"
 	if err := testUnmarshal(path, json_, correctEodPrice, eodEqualFunc); err != nil {
 		t.Fatal(err)
@@ -149,8 +145,6 @@ func TestEodPrice_UnmarshalJSON(t *testing.T) {
 }
 
 func TestEodMetadata_UnmarshalCSVWithFields(t *testing.T) {
-	t.Parallel()
-
 	path := "./test_data/eod_metadata.csv"
 	correctEodMetadata := []EodMetadata{
 		{
@@ -172,8 +166,6 @@ func TestEodMetadata_UnmarshalCSVWithFields(t *testing.T) {
 }
 
 func TestEodMetadata_UnmarshalJSON(t *testing.T) {
-	t.Parallel()
-
 	path := "./test_data/eod_metadata.json"
 	correctEodMetadata := EodMetadata{
 		Ticker:       "AAPL",
@@ -208,8 +200,6 @@ func TestEodMetadata_UnmarshalJSON(t *testing.T) {
 }
 
 func TestSymbolItem_ParseZip(t *testing.T) {
-	t.Parallel()
-
 	rawBytes, err := os.ReadFile("./test_data/symbol_list.zip")
 	if err != nil {
 		t.Fatalf("failed to open file: %s", err)
@@ -226,8 +216,6 @@ func TestSymbolItem_ParseZip(t *testing.T) {
 }
 
 func TestSymbolItem_UnmarshalCSVWithFields(t *testing.T) {
-	t.Parallel()
-
 	path := "./test_data/supported_tickers.csv"
 	correctSymbolItems := []SymbolItem{
 		{
@@ -258,8 +246,6 @@ func TestSymbolItem_UnmarshalCSVWithFields(t *testing.T) {
 }
 
 func TestIexTopOfBook_UnmarshalCSVWithFields(t *testing.T) {
-	t.Parallel()
-
 	path := "./test_data/iex_top_of_book.csv"
 	correctTopOfBook := []IexTopOfBook{
 		{
@@ -339,6 +325,25 @@ func TestIexTopOfBook_UnmarshalCSVWithFields(t *testing.T) {
 			AskPrice:          0,
 		},
 		{},
+		{
+			Ticker:            "GPCR",
+			Timestamp:         time.Date(2024, 12, 26, 21, 0, 0, 120115, time.UTC),
+			QuoteTimestamp:    time.Date(2024, 12, 26, 21, 0, 0, 120115, time.UTC),
+			LastSaleTimestamp: time.Date(2024, 12, 26, 20, 59, 55, 4092910, time.UTC),
+			Last:              29.58,
+			LastSize:          1,
+			TngoLast:          29.58,
+			PrevClose:         28.25,
+			Open:              28.5,
+			High:              30.41,
+			Low:               28.225,
+			Mid:               0,
+			Volume:            39247,
+			BidSize:           0,
+			BidPrice:          0,
+			AskSize:           0,
+			AskPrice:          0,
+		},
 	}
 	equalFunc := func(a, b []IexTopOfBook) bool {
 		return slices.Equal(a, b)
@@ -350,8 +355,6 @@ func TestIexTopOfBook_UnmarshalCSVWithFields(t *testing.T) {
 }
 
 func TestIexTopOfBook_UnmarshalJSON(t *testing.T) {
-	t.Parallel()
-
 	path := "./test_data/iex_top_of_book.json"
 	correctTopOfBook := []IexTopOfBook{
 		{
@@ -423,8 +426,6 @@ func TestIexTopOfBook_UnmarshalJSON(t *testing.T) {
 }
 
 func TestIexPrice_UnmarshalCSVWithFields(t *testing.T) {
-	t.Parallel()
-
 	path := "./test_data/iex_price.csv"
 	correct := []IexPrice{
 		{
@@ -454,8 +455,6 @@ func TestIexPrice_UnmarshalCSVWithFields(t *testing.T) {
 }
 
 func TestIexPrice_UnmarshalJSON(t *testing.T) {
-	t.Parallel()
-
 	path := "./test_data/iex_price.json"
 	correct := []IexPrice{
 		{
@@ -503,8 +502,6 @@ var correctStmtDef = []StmtDef{
 }
 
 func TestStmtDef_UnmarshalCSV(t *testing.T) {
-	t.Parallel()
-
 	path := "./test_data/statement_definitions.csv"
 	equalFunc := func(a, b []StmtDef) bool {
 		return slices.Equal(a, b)
@@ -516,8 +513,6 @@ func TestStmtDef_UnmarshalCSV(t *testing.T) {
 }
 
 func TestStmtDef_UnmarshalJSON(t *testing.T) {
-	t.Parallel()
-
 	path := "./test_data/statement_definitions.json"
 	equalFunc := func(a, b []StmtDef) bool {
 		return slices.Equal(a, b)
@@ -529,8 +524,6 @@ func TestStmtDef_UnmarshalJSON(t *testing.T) {
 }
 
 func TestStmtDataNested_UnmarshalJSON(t *testing.T) {
-	t.Parallel()
-
 	path := "./test_data/statement_value_nested.json"
 	equalFunc := func(a, b []StmtDataNested) bool {
 		return slices.EqualFunc(a, b, func(c StmtDataNested, d StmtDataNested) bool {
@@ -674,8 +667,6 @@ func TestStmtDataNested_UnmarshalJSON(t *testing.T) {
 }
 
 func TestStmtDataFlat_UnmarshalCSVWithFields(t *testing.T) {
-	t.Parallel()
-
 	path := "./test_data/statement_value_flat.csv"
 	equalFunc := func(a, b []StmtDataFlat) bool {
 		return slices.Equal(a, b)
@@ -749,8 +740,6 @@ func dailyFundamentalCmp(a, b DailyFundamental) bool {
 }
 
 func TestDailyFundamental_UnmarshalCSVWithFields(t *testing.T) {
-	t.Parallel()
-
 	path := "./test_data/daily_fundamental.csv"
 	equalFunc := func(a, b []DailyFundamental) bool {
 		return slices.EqualFunc(a, b, dailyFundamentalCmp)
@@ -762,8 +751,6 @@ func TestDailyFundamental_UnmarshalCSVWithFields(t *testing.T) {
 }
 
 func TestDailyFundamental_UnmarshalJSON(t *testing.T) {
-	t.Parallel()
-
 	path := "./test_data/daily_fundamental.json"
 	equalFunc := func(a, b []DailyFundamental) bool {
 		return slices.EqualFunc(a, b, dailyFundamentalCmp)
@@ -775,8 +762,6 @@ func TestDailyFundamental_UnmarshalJSON(t *testing.T) {
 }
 
 func TestFundamentalMetadata_UnmarshalCSVWithFields(t *testing.T) {
-	t.Parallel()
-
 	path := "./test_data/fundamental_metadata.csv"
 	correctFundamentalMetadata := []FundamentalMetadata{
 		{
@@ -867,8 +852,6 @@ func TestFundamentalMetadata_UnmarshalCSVWithFields(t *testing.T) {
 }
 
 func TestFundamentalMetadata_UnmarshalJSON(t *testing.T) {
-	t.Parallel()
-
 	path := "./test_data/fundamental_metadata.json"
 	correctFundamentalMetadata := []FundamentalMetadata{
 		{
@@ -943,8 +926,6 @@ var correctSearchResult = []SearchResult{
 }
 
 func TestSearchResult_UnmarshalCSV(t *testing.T) {
-	t.Parallel()
-
 	path := "./test_data/search_result.csv"
 	equalFunc := func(a, b []SearchResult) bool {
 		return slices.Equal(a, b)
@@ -956,8 +937,6 @@ func TestSearchResult_UnmarshalCSV(t *testing.T) {
 }
 
 func TestSearchResult_UnmarshalJSON(t *testing.T) {
-	t.Parallel()
-
 	path := "./test_data/search_result.json"
 	equalFunc := func(a, b []SearchResult) bool {
 		return slices.Equal(a, b)
