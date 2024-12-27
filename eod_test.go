@@ -33,7 +33,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					startDate: startDate,
+					StartDate: startDate,
 				},
 			},
 			wantErr: false,
@@ -44,7 +44,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					endDate: endDate,
+					EndDate: endDate,
 				},
 			},
 			wantErr: false,
@@ -55,7 +55,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					resampleFreq: Daily,
+					ResampleFreq: Daily,
 				},
 			},
 			wantErr: false,
@@ -66,7 +66,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					resampleFreq: Weekly,
+					ResampleFreq: Weekly,
 				},
 			},
 			wantErr: false,
@@ -77,7 +77,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					resampleFreq: Monthly,
+					ResampleFreq: Monthly,
 				},
 			},
 			wantErr: false,
@@ -88,7 +88,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					resampleFreq: Annually,
+					ResampleFreq: Annually,
 				},
 			},
 			wantErr: false,
@@ -99,7 +99,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: DateAsc,
+					Sort: DateAsc,
 				},
 			},
 			wantErr: false,
@@ -110,7 +110,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: DateDesc,
+					Sort: DateDesc,
 				},
 			},
 			wantErr: false,
@@ -121,7 +121,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: OpenAsc,
+					Sort: OpenAsc,
 				},
 			},
 			wantErr: false,
@@ -132,7 +132,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: OpenDesc,
+					Sort: OpenDesc,
 				},
 			},
 			wantErr: false,
@@ -143,7 +143,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: HighAsc,
+					Sort: HighAsc,
 				},
 			},
 			wantErr: false,
@@ -154,7 +154,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: HighDesc,
+					Sort: HighDesc,
 				},
 			},
 			wantErr: false,
@@ -165,7 +165,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: LowAsc,
+					Sort: LowAsc,
 				},
 			},
 			wantErr: false,
@@ -176,7 +176,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: LowDesc,
+					Sort: LowDesc,
 				},
 			},
 			wantErr: false,
@@ -187,7 +187,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: CloseAsc,
+					Sort: CloseAsc,
 				},
 			},
 			wantErr: false,
@@ -198,7 +198,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: CloseDesc,
+					Sort: CloseDesc,
 				},
 			},
 			wantErr: false,
@@ -209,7 +209,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: VolumeAsc,
+					Sort: VolumeAsc,
 				},
 			},
 			wantErr: false,
@@ -220,7 +220,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: VolumeDesc,
+					Sort: VolumeDesc,
 				},
 			},
 			wantErr: false,
@@ -232,7 +232,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: AdjOpenAsc,
+					Sort: AdjOpenAsc,
 				},
 			},
 			wantErr: false,
@@ -243,7 +243,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: AdjOpenDesc,
+					Sort: AdjOpenDesc,
 				},
 			},
 			wantErr: false,
@@ -254,7 +254,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: AdjHighAsc,
+					Sort: AdjHighAsc,
 				},
 			},
 			wantErr: false,
@@ -265,7 +265,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: AdjHighDesc,
+					Sort: AdjHighDesc,
 				},
 			},
 			wantErr: false,
@@ -276,7 +276,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: AdjLowAsc,
+					Sort: AdjLowAsc,
 				},
 			},
 			wantErr: false,
@@ -287,7 +287,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: AdjLowDesc,
+					Sort: AdjLowDesc,
 				},
 			},
 			wantErr: false,
@@ -298,7 +298,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: AdjCloseAsc,
+					Sort: AdjCloseAsc,
 				},
 			},
 			wantErr: false,
@@ -309,7 +309,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: AdjCloseDesc,
+					Sort: AdjCloseDesc,
 				},
 			},
 			wantErr: false,
@@ -320,7 +320,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: AdjVolumeAsc,
+					Sort: AdjVolumeAsc,
 				},
 			},
 			wantErr: false,
@@ -331,7 +331,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: AdjVolumeDesc,
+					Sort: AdjVolumeDesc,
 				},
 			},
 			wantErr: false,
@@ -342,7 +342,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: DivCashAsc,
+					Sort: DivCashAsc,
 				},
 			},
 			wantErr: false,
@@ -353,7 +353,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: DivCashDesc,
+					Sort: DivCashDesc,
 				},
 			},
 			wantErr: false,
@@ -364,7 +364,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: SplitFactorAsc,
+					Sort: SplitFactorAsc,
 				},
 			},
 			wantErr: false,
@@ -375,7 +375,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: SplitFactorDesc,
+					Sort: SplitFactorDesc,
 				},
 			},
 			wantErr: false,
@@ -395,7 +395,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					resampleFreq: "INVALID FREQUENCY",
+					ResampleFreq: "INVALID FREQUENCY",
 				},
 			},
 			wantErr: true,
@@ -406,7 +406,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: "INVALID SORT",
+					Sort: "INVALID SORT",
 				},
 			},
 			wantErr: true,
@@ -417,7 +417,7 @@ func TestClient_EodPrice(t *testing.T) {
 				ctx:    ctx,
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					respFormat: "INVALID FORMAT",
+					RespFormat: "INVALID FORMAT",
 				},
 			},
 			wantErr: true,
@@ -467,7 +467,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					startDate: startDate,
+					StartDate: startDate,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?startDate=2022-01-01",
@@ -477,7 +477,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					endDate: endDate,
+					EndDate: endDate,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?endDate=2024-01-01",
@@ -487,7 +487,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					resampleFreq: Daily,
+					ResampleFreq: Daily,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?resampleFreq=daily",
@@ -497,7 +497,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					resampleFreq: Weekly,
+					ResampleFreq: Weekly,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?resampleFreq=weekly",
@@ -507,7 +507,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					resampleFreq: Monthly,
+					ResampleFreq: Monthly,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?resampleFreq=monthly",
@@ -517,7 +517,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					resampleFreq: Annually,
+					ResampleFreq: Annually,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?resampleFreq=annually",
@@ -527,7 +527,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: DateAsc,
+					Sort: DateAsc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=date",
@@ -537,7 +537,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: DateDesc,
+					Sort: DateDesc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=-date",
@@ -547,7 +547,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: OpenAsc,
+					Sort: OpenAsc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=open",
@@ -557,7 +557,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: OpenDesc,
+					Sort: OpenDesc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=-open",
@@ -567,7 +567,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: HighAsc,
+					Sort: HighAsc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=high",
@@ -577,7 +577,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: HighDesc,
+					Sort: HighDesc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=-high",
@@ -587,7 +587,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: LowAsc,
+					Sort: LowAsc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=low",
@@ -597,7 +597,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: LowDesc,
+					Sort: LowDesc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=-low",
@@ -607,7 +607,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: CloseAsc,
+					Sort: CloseAsc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=close",
@@ -617,7 +617,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: CloseDesc,
+					Sort: CloseDesc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=-close",
@@ -627,7 +627,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: VolumeAsc,
+					Sort: VolumeAsc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=volume",
@@ -637,7 +637,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: VolumeDesc,
+					Sort: VolumeDesc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=-volume",
@@ -647,7 +647,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: AdjOpenAsc,
+					Sort: AdjOpenAsc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=adjOpen",
@@ -657,7 +657,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: AdjOpenDesc,
+					Sort: AdjOpenDesc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=-adjOpen",
@@ -667,7 +667,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: AdjHighAsc,
+					Sort: AdjHighAsc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=adjHigh",
@@ -677,7 +677,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: AdjHighDesc,
+					Sort: AdjHighDesc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=-adjHigh",
@@ -687,7 +687,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: AdjLowAsc,
+					Sort: AdjLowAsc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=adjLow",
@@ -697,7 +697,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: AdjLowDesc,
+					Sort: AdjLowDesc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=-adjLow",
@@ -707,7 +707,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: AdjCloseAsc,
+					Sort: AdjCloseAsc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=adjClose",
@@ -717,7 +717,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: AdjCloseDesc,
+					Sort: AdjCloseDesc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=-adjClose",
@@ -727,7 +727,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: AdjVolumeAsc,
+					Sort: AdjVolumeAsc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=adjVolume",
@@ -737,7 +737,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: AdjVolumeDesc,
+					Sort: AdjVolumeDesc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=-adjVolume",
@@ -747,7 +747,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: DivCashAsc,
+					Sort: DivCashAsc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=divCash",
@@ -757,7 +757,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: DivCashDesc,
+					Sort: DivCashDesc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=-divCash",
@@ -767,7 +767,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: SplitFactorAsc,
+					Sort: SplitFactorAsc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=splitFactor",
@@ -777,27 +777,27 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					sort: SplitFactorDesc,
+					Sort: SplitFactorDesc,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?sort=-splitFactor",
 		},
 		{
-			name: "csvRespFormat",
+			name: "csvRespFormat:",
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					respFormat: CSV,
+					RespFormat: CSV,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?format=csv",
 		},
 		{
-			name: "jsonRespFormat",
+			name: "jsonRespFormat:",
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					respFormat: JSON,
+					RespFormat: JSON,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?format=json",
@@ -807,7 +807,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					columns: nil,
+					Columns: nil,
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices",
@@ -817,7 +817,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					columns: []string{},
+					Columns: []string{},
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices",
@@ -827,7 +827,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					columns: []string{"open"},
+					Columns: []string{"open"},
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices" +
@@ -838,7 +838,7 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					columns: []string{"open", "high", "low", "close"},
+					Columns: []string{"open", "high", "low", "close"},
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices" +
@@ -849,11 +849,11 @@ func TestEodPriceUrl(t *testing.T) {
 			args: args{
 				ticker: "AAPL",
 				queryParams: &EodPriceParams{
-					startDate:  startDate,
-					endDate:    endDate,
-					sort:       DateDesc,
-					respFormat: CSV,
-					columns:    []string{"date", "open", "high", "low", "close", "volume"},
+					StartDate:  startDate,
+					EndDate:    endDate,
+					Sort:       DateDesc,
+					RespFormat: CSV,
+					Columns:    []string{"date", "open", "high", "low", "close", "volume"},
 				},
 			},
 			want: "https://api.tiingo.com/tiingo/daily/AAPL/prices?startDate=2022-01-01" +
