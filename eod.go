@@ -10,12 +10,12 @@ import (
 // EodPriceParams represents the query parameters for the [End-of-Day].2.1.2
 // End-of-Day Endpoint
 type EodPriceParams struct {
-	startDate    time.Time
-	endDate      time.Time
-	resampleFreq EodFreq
-	sort         Sort
-	respFormat   Format
-	columns      []string
+	StartDate    time.Time
+	EndDate      time.Time
+	ResampleFreq EodFreq
+	Sort         Sort
+	RespFormat   Format
+	Columns      []string
 }
 
 // EodPrice returns the daily price response data for a given ticker with the
@@ -35,7 +35,7 @@ func (c *Client) EodPrice(ctx context.Context, ticker string,
 	// Parse
 	var format string
 	if queryParams != nil {
-		format = queryParams.respFormat
+		format = queryParams.RespFormat
 	}
 	return Parse[[]EodPrice](rawBytes, format)
 }
@@ -72,12 +72,12 @@ func EodPriceUrl(ticker string, queryParams *EodPriceParams) string {
 
 	// Build query string
 	first := true
-	if !queryParams.startDate.IsZero() {
+	if !queryParams.StartDate.IsZero() {
 		url.WriteString("?startDate=")
-		url.WriteString(queryParams.startDate.Format("2006-01-02"))
+		url.WriteString(queryParams.StartDate.Format("2006-01-02"))
 		first = false
 	}
-	if !queryParams.endDate.IsZero() {
+	if !queryParams.EndDate.IsZero() {
 		if first {
 			url.WriteString("?")
 			first = false
@@ -85,9 +85,9 @@ func EodPriceUrl(ticker string, queryParams *EodPriceParams) string {
 			url.WriteString("&")
 		}
 		url.WriteString("endDate=")
-		url.WriteString(queryParams.endDate.Format("2006-01-02"))
+		url.WriteString(queryParams.EndDate.Format("2006-01-02"))
 	}
-	if queryParams.resampleFreq != "" {
+	if queryParams.ResampleFreq != "" {
 		if first {
 			url.WriteString("?")
 			first = false
@@ -95,9 +95,9 @@ func EodPriceUrl(ticker string, queryParams *EodPriceParams) string {
 			url.WriteString("&")
 		}
 		url.WriteString("resampleFreq=")
-		url.WriteString(queryParams.resampleFreq)
+		url.WriteString(queryParams.ResampleFreq)
 	}
-	if queryParams.sort != "" {
+	if queryParams.Sort != "" {
 		if first {
 			url.WriteString("?")
 			first = false
@@ -105,9 +105,9 @@ func EodPriceUrl(ticker string, queryParams *EodPriceParams) string {
 			url.WriteString("&")
 		}
 		url.WriteString("sort=")
-		url.WriteString(queryParams.sort)
+		url.WriteString(queryParams.Sort)
 	}
-	if queryParams.respFormat != "" {
+	if queryParams.RespFormat != "" {
 		if first {
 			url.WriteString("?")
 			first = false
@@ -115,16 +115,16 @@ func EodPriceUrl(ticker string, queryParams *EodPriceParams) string {
 			url.WriteString("&")
 		}
 		url.WriteString("format=")
-		url.WriteString(queryParams.respFormat)
+		url.WriteString(queryParams.RespFormat)
 	}
-	if len(queryParams.columns) > 0 {
+	if len(queryParams.Columns) > 0 {
 		if first {
 			url.WriteString("?")
 		} else {
 			url.WriteString("&")
 		}
 		url.WriteString("columns=")
-		url.WriteString(strings.Join(queryParams.columns, ","))
+		url.WriteString(strings.Join(queryParams.Columns, ","))
 	}
 
 	return url.String()
