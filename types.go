@@ -858,6 +858,27 @@ type SearchResult struct {
 	CountryCode       string `json:"countryCode" csv:"countryCode"`
 }
 
+// PriceData corresponds to the [Crypto].2.3.2 priceData Response
+type PriceData struct {
+	Date 			time.Time `json:"date,omitempty"`
+	Open			float64   `json:"open,omitempty"`
+	High			float64   `json:"high,omitempty"`
+	Low				float64   `json:"low,omitempty"`
+	Close			float64   `json:"close,omitempty"`
+	TradesDone		int32     `json:"tradesDone,omitempty"`
+	Volume			float64   `json:"volume,omitempty"`
+	VolumeNational	float64   `json:"volumeNational,omitempty"`
+}
+
+// CryptoResults corresponds to the [Crypto].2.3.2 Crypto Endpoint
+type CryptoResult struct {
+	Ticker 			  string 		`json:"ticker,omitempty"`
+	BaseCurrency	  string 		`json:"baseCurrency,omitempty"`
+	QuoteCurrency	  string 		`json:"quoteCurrency,omitempty"`
+	PriceData		  PriceData 	`json:"priceData,omitempty"`
+	//ExchangeData	  ExchangeData  `json:"exchangeData,omitempty"`
+}
+
 func parseFloat(value string) (float64, error) {
 	if value == "" {
 		return 0, nil
