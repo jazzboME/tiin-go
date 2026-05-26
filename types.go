@@ -26,6 +26,7 @@ const (
 	OneHour    IexFreq = "1hour"
 	TwoHour    IexFreq = "2hour"
 	FourHour   IexFreq = "4hour"
+	OneDay	   IexFreq = "1day"
 
 	DateAsc         Sort = "date"
 	DateDesc        Sort = "-date"
