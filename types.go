@@ -926,9 +926,6 @@ func parseTimeMultiLayout(layouts []string, value string) (time.Time, error) {
 func Parse[T any](rawBytes []byte, format Format) (T, error) {
 	var data T
 	var err error
-
-	fmt.Println(string(rawBytes))
-
 	switch format {
 	case JSON, "":
 		err = json.Unmarshal(rawBytes, &data)

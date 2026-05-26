@@ -3,7 +3,6 @@ package tiingo
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 )
@@ -83,9 +82,7 @@ func CryptoPriceUrl(ticker []string, queryParams *CryptoPriceParams) string {
 		url.WriteString("&resampleFreq=")
 		url.WriteString(queryParams.ResampleFreq)
 	}
-	url.WriteString("&includeRawExchangeData=true")
 	
-	log.Printf(url.String())
 	return url.String()
 }
 
