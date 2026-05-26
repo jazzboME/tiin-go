@@ -10,7 +10,6 @@ import (
 // CrytoPriceParams represents the query parameters for the [Real-time & Historical Prices].2.3.2
 // Crypto Endpoint
 type CryptoPriceParams struct {
-	Tickers		 []string
 	Exchanges	 []string
 	StartDate    time.Time
 	EndDate      time.Time
@@ -59,13 +58,13 @@ func CryptoPriceUrl(ticker []string, queryParams *CryptoPriceParams) string {
 	url.WriteString("https://api.tiingo.com/tiingo/crypto/prices")
 
 	// No query params to add
-	if queryParams == nil || len(queryParams.Tickers) == 0 {
+	if queryParams == nil || len(ticker) == 0 {
 		return url.String()
 	}
 
 	// Build query string
 	url.WriteString("?columns=")
-	url.WriteString(strings.Join(queryParams.Tickers, ","))
+	url.WriteString(strings.Join(ticker, ","))
 
 	if len(queryParams.Exchanges) > 0 {
 		url.WriteString("&exchanges=")
