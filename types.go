@@ -868,7 +868,7 @@ type PriceData struct {
 	Close			float64   `json:"close,omitempty"`
 	TradesDone		int32     `json:"tradesDone,omitempty"`
 	Volume			float64   `json:"volume,omitempty"`
-	VolumeNational	float64   `json:"volumeNational,omitempty"`
+	VolumeNotional	float64   `json:"volumeNotional,omitempty"`
 }
 
 // CryptoResults corresponds to the [Crypto].2.3.2 Crypto Endpoint
@@ -876,7 +876,7 @@ type CryptoResult struct {
 	Ticker 			  string 		`json:"ticker,omitempty"`
 	BaseCurrency	  string 		`json:"baseCurrency,omitempty"`
 	QuoteCurrency	  string 		`json:"quoteCurrency,omitempty"`
-	PriceData		  PriceData 	`json:"priceData,omitempty"`
+	PriceData		  []PriceData 	`json:"priceData,omitempty"`
 	//ExchangeData	  ExchangeData  `json:"exchangeData,omitempty"`
 }
 
@@ -928,7 +928,7 @@ func Parse[T any](rawBytes []byte, format Format) (T, error) {
 	var err error
 
 	fmt.Println(string(rawBytes))
-	
+
 	switch format {
 	case JSON, "":
 		err = json.Unmarshal(rawBytes, &data)
