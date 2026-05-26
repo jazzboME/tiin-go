@@ -866,7 +866,7 @@ type PriceData struct {
 	High			float64   `json:"high,omitempty"`
 	Low				float64   `json:"low,omitempty"`
 	Close			float64   `json:"close,omitempty"`
-	TradesDone		int32     `json:"tradesDone,omitempty"`
+	TradesDone		float64     `json:"tradesDone,omitempty"`
 	Volume			float64   `json:"volume,omitempty"`
 	VolumeNotional	float64   `json:"volumeNotional,omitempty"`
 }
