@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	getClient = sync.OnceValue[*Client](func() *Client {
+	getClient = sync.OnceValue(func() *Client {
 		apiToken, ok := os.LookupEnv("TIINGO_TOKEN")
 		if !ok {
 			panic("TIINGO_TOKEN must be set if doing a live client test")

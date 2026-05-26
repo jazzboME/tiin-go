@@ -151,7 +151,7 @@ func TestClient_IexTopOfBook(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			if err := liveTest[[]IexTopOfBook]("IexTopOfBook()", tt.wantErr, func() ([]IexTopOfBook, error) {
+			if err := liveTest("IexTopOfBook()", tt.wantErr, func() ([]IexTopOfBook, error) {
 				return getClient().IexTopOfBook(tt.args.ctx, tt.args.queryParams)
 			}); err != nil {
 				t.Error(err)
@@ -395,7 +395,7 @@ func TestClient_IexHistory(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			if err := liveTest[[]IexPrice]("IexHistory()", tt.wantErr, func() ([]IexPrice, error) {
+			if err := liveTest("IexHistory()", tt.wantErr, func() ([]IexPrice, error) {
 				return getClient().IexHistory(tt.args.ctx, tt.args.ticker, tt.args.queryParams)
 			}); err != nil {
 				t.Error(err)

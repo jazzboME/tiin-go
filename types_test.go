@@ -30,15 +30,16 @@ func testUnmarshal[T any](path string, unmarshalType kind, correct T, cmpFunc fu
 	}
 
 	var data T
-	if unmarshalType == json_ {
+	switch unmarshalType {
+	case json_:
 		if err = json.Unmarshal(rawBytes, &data); err != nil {
 			return fmt.Errorf("failed to unmarshall json bytes: %w", err)
 		}
-	} else if unmarshalType == csv_ {
+	case csv_:
 		if err = gocsv.UnmarshalBytes(rawBytes, &data); err != nil {
 			return fmt.Errorf("failed to unmarshall csv bytes: %w", err)
 		}
-	} else {
+	default:
 		return fmt.Errorf("unmarshalType not recognized: %v", unmarshalType)
 	}
 

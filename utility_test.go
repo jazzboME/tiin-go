@@ -210,7 +210,7 @@ func TestClient_Search(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			if err := liveTest[[]SearchResult]("Search()", tt.wantErr, func() ([]SearchResult, error) {
+			if err := liveTest("Search()", tt.wantErr, func() ([]SearchResult, error) {
 				return getClient().Search(tt.args.ctx, tt.args.query, tt.args.queryParams)
 			}); err != nil {
 				t.Error(err)

@@ -151,7 +151,7 @@ func TestClient_StmtDefs(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			if err := liveTest[[]StmtDef]("StmtDefs()", tt.wantErr, func() ([]StmtDef, error) {
+			if err := liveTest("StmtDefs()", tt.wantErr, func() ([]StmtDef, error) {
 				return getClient().StmtDefs(tt.args.ctx, tt.args.queryParams)
 			}); err != nil {
 				t.Error(err)
@@ -346,7 +346,7 @@ func TestClient_StmtDataFlat(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			if err := liveTest[[]StmtDataFlat]("StmtDataFlat()", tt.wantErr,
+			if err := liveTest("StmtDataFlat()", tt.wantErr,
 				func() ([]StmtDataFlat, error) {
 					return getClient().StmtDataFlat(tt.args.ctx, tt.args.ticker, tt.args.queryParams)
 				},
@@ -417,7 +417,7 @@ func TestClient_StmtDataNested(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			if err := liveTest[[]StmtDataNested]("StmtDataNested()", tt.wantErr,
+			if err := liveTest("StmtDataNested()", tt.wantErr,
 				func() ([]StmtDataNested, error) {
 					return getClient().StmtDataNested(tt.args.ctx, tt.args.ticker, tt.args.queryParams)
 				},
@@ -685,7 +685,7 @@ func TestClient_DailyFundamental(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			if err := liveTest[[]DailyFundamental]("DailyFundamental()", tt.wantErr,
+			if err := liveTest("DailyFundamental()", tt.wantErr,
 				func() ([]DailyFundamental, error) {
 					return getClient().DailyFundamental(tt.args.ctx, tt.args.ticker, tt.args.queryParams)
 				},
@@ -836,7 +836,7 @@ func TestClient_FundamentalMetadata(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			if err := liveTest[[]FundamentalMetadata]("FundamentalMetadata()", tt.wantErr,
+			if err := liveTest("FundamentalMetadata()", tt.wantErr,
 				func() ([]FundamentalMetadata, error) {
 					return getClient().FundamentalMetadata(tt.args.ctx, tt.args.queryParams)
 				},

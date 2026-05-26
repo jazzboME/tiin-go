@@ -427,7 +427,7 @@ func TestClient_EodPrice(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			if err := liveTest[[]EodPrice]("EodPrice()", tt.wantErr, func() ([]EodPrice, error) {
+			if err := liveTest("EodPrice()", tt.wantErr, func() ([]EodPrice, error) {
 				return getClient().EodPrice(tt.args.ctx, tt.args.ticker, tt.args.queryParams)
 			}); err != nil {
 				t.Error(err)
@@ -928,7 +928,7 @@ func TestClient_EodMetadata(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			if err := liveTest[EodMetadata]("EodMetadata()", tt.wantErr, func() (EodMetadata, error) {
+			if err := liveTest("EodMetadata()", tt.wantErr, func() (EodMetadata, error) {
 				return getClient().EodMetadata(tt.args.ctx, tt.args.ticker)
 			}); err != nil {
 				t.Error(err)
