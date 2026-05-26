@@ -64,7 +64,7 @@ func CryptoPriceUrl(ticker []string, queryParams *CryptoPriceParams) string {
 	}
 
 	// Build query string
-	url.WriteString("?columns=")
+	url.WriteString("?tickers=")
 	url.WriteString(strings.Join(ticker, ","))
 
 	if len(queryParams.Exchanges) > 0 {
