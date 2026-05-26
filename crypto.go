@@ -7,8 +7,7 @@ import (
 	"time"
 )
 
-// CrytoPriceParams represents the query parameters for the [Real-time & Historical Prices].2.3.2
-// Crypto Endpoint
+// CrytoPriceParams represents the query parameters for the [Crypto].2.3.2 Endpoint
 type CryptoPriceParams struct {
 	Exchanges	 []string
 	StartDate    time.Time
@@ -16,8 +15,8 @@ type CryptoPriceParams struct {
 	ResampleFreq IexFreq
 }
 
-// EodPrice returns the daily price response data for a given ticker with the
-// provided params from the [End-of-Day].2.1.2 End-of-Day Endpoint.
+// CryptoPrice returns the daily close price response data for a given ticker with the
+// provided params from the [Crypto].2.3.2 Endpoint.
 //
 // If queryParams is non-nil, any non-zero struct values will be applied to the
 // url. Zero value items will be left out and Tiingo defaults will be used. A
@@ -34,7 +33,7 @@ func (c *Client) CryptoPrice(ctx context.Context, ticker []string,
 	return Parse[[]CryptoResult](rawBytes, "json")
 }
 
-// EodPriceRaw functions the same as EodPrice, except the raw response bytes are
+// CryptoPriceRaw functions the same as EodPrice, except the raw response bytes are
 // returned instead of the parsed type.
 func (c *Client) CryptoPriceRaw(ctx context.Context, ticker []string,
 	queryParams *CryptoPriceParams) ([]byte, error) {
@@ -45,8 +44,8 @@ func (c *Client) CryptoPriceRaw(ctx context.Context, ticker []string,
 	return c.get(ctx, url)
 }
 
-// EodPriceUrl returns a built url for the given ticker with the provided params
-// from the [End-of-Day].2.1.2 End-of-Day Endpoint.
+// CryptoPriceUrl returns a built url for the given ticker with the provided params
+// from the [Crypto].2.3.2 Endpoint Endpoint.
 //
 // If queryParams is non-nil, any non-zero struct values will be applied to the
 // url. Zero value items will be left out and Tiingo defaults will be used. A
@@ -86,20 +85,20 @@ func CryptoPriceUrl(ticker []string, queryParams *CryptoPriceParams) string {
 	return url.String()
 }
 
-// EodMetadata returns the eod metadata response data for a given ticker
-// from the [End-of-Day].2.1.3 Meta Endpoint
-func (c *Client)  CryptoMetadata(ctx context.Context, ticker string) (EodMetadata, error) {
+// CryptoMetadata returns the eod metadata response data for a given ticker
+// from the [Crypto].2.3.3 Meta Endpoint
+func (c *Client)  CryptoMetadata(ctx context.Context, ticker []string) (CryptoMetadata, error) {
 	// Get the data
-	rawBytes, err := c.EodMetadataRaw(ctx, ticker)
+	rawBytes, err := c.CryptoMetadataRaw(ctx, ticker)
 	if err != nil {
-		return EodMetadata{}, fmt.Errorf("failed to get data: %w", err)
+		return CryptoMetadata{}, fmt.Errorf("failed to get data: %w", err)
 	}
 
 	// Parse
-	return Parse[EodMetadata](rawBytes, JSON)
+	return Parse[CryptoMetadata](rawBytes, JSON)
 }
 
-// EodMetadataRaw functions the same as EodMetadata, except the raw response
+// CryptoMetadataRaw functions the same as CryptoMetadata, except the raw response
 // bytes are returned instead of the parsed type.
 func (c *Client) CryptoMetadataRaw(ctx context.Context, ticker []string) ([]byte, error) {
 	// Build URL
@@ -109,8 +108,9 @@ func (c *Client) CryptoMetadataRaw(ctx context.Context, ticker []string) ([]byte
 	return c.get(ctx, url)
 }
 
-// EodMetadataUrl returns a built url for the given ticker from the
-// [End-of-Day].2.1.3 Meta Endpoint.
+// CryptoMetadataUrl returns a built url for the given ticker from the
+// [Crypto].2.3.3 Meta Endpoint.
 func CryptoMetadataUrl(ticker []string) string {
-	return fmt.Sprintf("https://api.tiingo.com/tiingo/daily/%s", ticker)
+	var tickers = strings.Join(ticker, ",")
+	return fmt.Sprintf("https://api.tiingo.com/tiingo/crypto/?tickers=%s", tickers)
 }

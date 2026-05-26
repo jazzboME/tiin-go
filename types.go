@@ -254,6 +254,15 @@ func (e *EodPrice) UnmarshalCSVWithFields(key, value string) error {
 	return nil
 }
 
+// CryptoMetadata corresponds to the [Crypto].2.3.3 Meta Endpoint
+type CryptoMetadata struct {
+	Ticker			string	 	`json:"ticker,omitempty" csv:"ticker,omitempty"`
+	BaseCurrency	string		`json:"baseCurrency,omitempty" csv:"baseCurrency,omitempty"`
+	QuoteCurrency	string		`json:"quoteCurrency,omitempty" csv:"quoteCurrency,omitempty"`
+	Name			string		`json:"name,omitempty" csv:"name,omitempty"`
+	Description		string		`json:"description,omitempty" csv:"description,omitempty"`
+}
+
 // EodMetadata corresponds to the [End-of-Day].2.1.3 Meta Endpoint
 type EodMetadata struct {
 	Ticker       string    `json:"ticker,omitempty" csv:"ticker,omitempty"`
