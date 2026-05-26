@@ -14,7 +14,7 @@ type CryptoPriceParams struct {
 	Exchanges	 []string
 	StartDate    time.Time
 	EndDate      time.Time
-	ResampleFreq EodFreq
+	ResampleFreq IexFreq
 }
 
 // EodPrice returns the daily price response data for a given ticker with the
